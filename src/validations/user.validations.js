@@ -14,4 +14,10 @@ const registerValidation = Joi.object({
   businessId: Joi.number().min(1),
 });
 
-module.exports = { registerValidation };
+// For user signin
+const signinValidation = Joi.object({
+  username: Joi.string().min(2).required(),
+  password: Joi.string().min(4).required(),
+});
+
+module.exports = { registerValidation, signinValidation };
