@@ -6,7 +6,13 @@ router.post("/register", async (req, res) => {
   // Validate
   const { error } = registerValidation.validate(req.body);
   if (error) {
-    return res.status(400).send(error.details[0].message);
+    return res.status(400).send({ message: error.details[0].message });
+  }
+
+  // To check unique emails
+  const emailExist = await User.findOne({ email: req.body.email });
+  if (emailExist) {
+    return res.status(400).send({ message: "Email already exists!" });
   }
 
   const {
