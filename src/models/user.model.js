@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const { Schema } = mongoose;
+
+// User Schema
 const UserSchema = new Schema(
   {
     emp_id: {
@@ -62,6 +64,7 @@ const UserSchema = new Schema(
   }
 );
 
+// Hashing the password
 UserSchema.pre("save", async function (next) {
   try {
     // check method of registration
@@ -75,5 +78,6 @@ UserSchema.pre("save", async function (next) {
     return next(error);
   }
 });
+
 const UserModel = mongoose.model("user", UserSchema);
 module.exports = UserModel;
