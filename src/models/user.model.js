@@ -20,8 +20,9 @@ const UserSchema = new Schema(
       max: 1024,
     },
     mobile_number: {
-      type: Number,
+      type: String,
       required: [true, "mobile number required"],
+      min: 4,
     },
     avatar: String,
     username: {
@@ -47,13 +48,12 @@ const UserSchema = new Schema(
       min: 4,
     },
     role: {
-      type: Array,
-      default: ["admin"],
+      type: String,
+      default: "admin",
     },
     businessId: {
-      type: String,
+      type: Number,
       default: 0,
-      required: [true, "business ID required"],
     },
     lastVisited: { type: Date, default: new Date() },
   },

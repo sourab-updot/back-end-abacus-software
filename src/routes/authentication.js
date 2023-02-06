@@ -1,7 +1,14 @@
 const router = require("express").Router();
 const User = require("../models/user.model");
+const { registerValidation } = require("../validations/user.validations");
 
 router.post("/register", async (req, res) => {
+  // Validate
+  const { error } = registerValidation.validate(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+
   const {
     first_name,
     last_name,

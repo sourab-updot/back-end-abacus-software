@@ -1,0 +1,17 @@
+const Joi = require("joi");
+
+// For user registration
+const registerValidation = Joi.object({
+  first_name: Joi.string().min(2).required(),
+  last_name: Joi.string().min(2).required(),
+  username: Joi.string().min(2).required(),
+  avatar: Joi.string().min(2),
+  mobile_number: Joi.string().min(4).required(),
+  email: Joi.string().min(6).required().email(),
+  password: Joi.string().min(4).required(),
+  designation: Joi.string().min(2),
+  role: Joi.string().min(2),
+  businessId: Joi.number().min(1),
+});
+
+module.exports = { registerValidation };
