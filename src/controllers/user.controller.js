@@ -5,6 +5,13 @@ const {
 } = require("../validations/user.validations");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
+const multer = require("multer");
+const { uploadFileToS3 } = require("../configs/aws.s3");
+const { randomiseFileName } = require("../utility/randomFileName");
+
+// Image Storage
+const storage = multer.memoryStorage();
+const uploadImage = multer({ storage: storage });
 
 // @desc Create user
 // @route /api/user/register
@@ -22,12 +29,12 @@ const registerUserController = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Email already exists!" });
   }
 
+  // Request data
   const {
     first_name,
     last_name,
     mobile_number,
     email,
-    avatar,
     username,
     password,
     designation,
@@ -35,11 +42,14 @@ const registerUserController = asyncHandler(async (req, res) => {
     businessId,
   } = req.body;
 
+  const imageFileName = randomiseFileName(16);
+  const imageFile = req.file;
+
   const newUser = new User({
     first_name: first_name,
     last_name: last_name,
     username: username,
-    avatar: avatar,
+    avatar: imageFileName,
     mobile_number: mobile_number,
     email: email,
     password: password,
@@ -47,7 +57,7 @@ const registerUserController = asyncHandler(async (req, res) => {
     role: role,
     businessId: businessId,
   });
-
+  await uploadFileToS3(imageFile, imageFileName);
   await newUser.save();
   res.status(200).json({ message: "User created successfully!" });
 });
@@ -80,4 +90,4 @@ const signinUserController = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Access Granted." });
 });
 
-module.exports = { registerUserController, signinUserController };
+module.exports = { uploadImage, registerUserController, signinUserController };
