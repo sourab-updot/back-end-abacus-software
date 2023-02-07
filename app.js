@@ -2,10 +2,11 @@ require("dotenv").config();
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const colors = require("colors");
 
 // Import local modules
 const authRoutes = require("./src/routes/auth.route");
-const db = require("./src/database.config");
+const db = require("./src/configs/database.config");
 const errorHandler = require("./src/middlewares/error.middleware");
 
 const app = express();
@@ -25,5 +26,5 @@ app.use("/api/user", authRoutes);
 const port = process.env.PORT;
 
 app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+  console.log(`Server running on http://localhost:${port}`.bgGreen);
 });
