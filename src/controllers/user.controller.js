@@ -1,23 +1,25 @@
-const router = require("express").Router();
 const User = require("../models/user.model");
 const {
   registerValidation,
   signinValidation,
 } = require("../validations/user.validations");
 const bcrypt = require("bcryptjs");
+const asyncHandler = require("express-async-handler");
 
-//User Register Endpoint
-router.post("/register", async (req, res) => {
+// @desc Create user
+// @route /api/user/register
+// @access Public
+const registerUserController = asyncHandler(async (req, res) => {
   // Validate
   const { error } = registerValidation.validate(req.body);
   if (error) {
-    return res.status(400).send({ message: error.details[0].message });
+    return res.status(400).json({ message: error.details[0].message });
   }
 
   // To check unique emails
   const emailExist = await User.findOne({ email: req.body.email });
   if (emailExist) {
-    return res.status(400).send({ message: "Email already exists!" });
+    return res.status(400).json({ message: "Email already exists!" });
   }
 
   const {
@@ -46,20 +48,18 @@ router.post("/register", async (req, res) => {
     businessId: businessId,
   });
 
-  try {
-    await newUser.save();
-    res.status(200).send({ message: "User created successfully!" });
-  } catch (error) {
-    res.status(400).send(error);
-  }
+  await newUser.save();
+  res.status(200).json({ message: "User created successfully!" });
 });
 
-// User Signin Endpoint
-router.post("/signin", async (req, res) => {
+// @desc Signin user
+// @route /api/user/signin
+// @access Public
+const signinUserController = asyncHandler(async (req, res) => {
   // Validate
   const { error } = signinValidation.validate(req.body);
   if (error) {
-    return res.status(400).send({ message: error.details[0].message });
+    return res.status(400).json({ message: error.details[0].message });
   }
 
   // To check username exists
@@ -67,17 +67,17 @@ router.post("/signin", async (req, res) => {
   if (!user) {
     return res
       .status(400)
-      .send({ message: "No user found with this username. Try again." });
+      .json({ message: "No user found with this username. Try again." });
   }
   const validPassword = await bcrypt.compareSync(
     req.body.password,
     user.password
   );
   if (!validPassword) {
-    return res.status(400).send({ message: "Password is invalid. Try again." });
+    return res.status(400).json({ message: "Password is invalid. Try again." });
   }
 
-  res.status(200).send({ message: "Access Granted." });
+  res.status(200).json({ message: "Access Granted." });
 });
 
-module.exports = router;
+module.exports = { registerUserController, signinUserController };

@@ -3,9 +3,10 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 
-// Import Routes
-const authRoutes = require("./src/routes/authentication");
+// Import local modules
+const authRoutes = require("./src/routes/auth.route");
 const db = require("./src/database.config");
+const errorHandler = require("./src/middlewares/error.middleware");
 
 const app = express();
 db.connect();
@@ -13,6 +14,9 @@ db.connect();
 // Body Parser middlewares
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Error middleware
+app.use(errorHandler);
 
 // Route Middlewares
 app.use("/api/user", authRoutes);
