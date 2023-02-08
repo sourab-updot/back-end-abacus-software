@@ -42,33 +42,12 @@ const registerUserController = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: NOT_UNIQUE_EMAIL_ERR });
   }
 
-  // Request data
-  const {
-    first_name,
-    last_name,
-    mobile_number,
-    email,
-    username,
-    password,
-    designation,
-    role,
-    businessId,
-  } = req.body;
-
   const imageFileName = randomBytesGenerator(16);
   const imageFile = req.file;
 
   const newUser = new User({
-    first_name: first_name,
-    last_name: last_name,
-    username: username,
+    ...req.body,
     avatar: imageFileName,
-    mobile_number: mobile_number,
-    email: email,
-    password: password,
-    designation: designation,
-    role: role,
-    businessId: businessId,
   });
   await uploadFileToS3(imageFile, imageFileName);
   await newUser.save();
@@ -167,31 +146,8 @@ const getUserController = asyncHandler(async (req, res) => {
   if (!req.user) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
-  const {
-    _id,
-    emp_id,
-    first_name,
-    last_name,
-    mobile_number,
-    email,
-    username,
-    designation,
-    role,
-    businessId,
-    lastVisited,
-  } = req.user;
   res.status(200).json({
-    _id,
-    emp_id,
-    first_name,
-    last_name,
-    mobile_number,
-    email,
-    username,
-    designation,
-    role,
-    businessId,
-    lastVisited,
+    ...req.user._doc,
   });
 });
 module.exports = {

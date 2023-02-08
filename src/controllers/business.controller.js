@@ -27,37 +27,9 @@ const addDetailController = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: USERNAME_NOT_FOUND_ERR });
   }
 
-  const {
-    name,
-    phone_number,
-    mobile_number,
-    address,
-    city,
-    state,
-    pincode,
-    country,
-    base_currency,
-    timezone,
-    fiscal_month,
-    fiscal_day,
-    date_format,
-  } = req.body;
-
   const newBusinessDetails = new Business({
     user: user._id,
-    name: name,
-    phone_number: phone_number,
-    mobile_number: mobile_number,
-    address: address,
-    city: city,
-    state: state,
-    pincode: pincode,
-    country: country,
-    base_currency: base_currency,
-    timezone: timezone,
-    fiscal_month: fiscal_month,
-    fiscal_day: fiscal_day,
-    date_format: date_format,
+    ...req.body,
   });
   await newBusinessDetails.save();
   res.status(200).json({ message: BUSINESS_DETAILS_ADDED });
