@@ -150,6 +150,9 @@ const verifyUserController = asyncHandler(async (req, res) => {
     email: user.email,
   });
 
+  user.verification_code = "";
+  await user.save();
+
   res.status(200).json({
     message: USER_ACCESS_GRANTED,
     token: token,
@@ -161,7 +164,7 @@ const verifyUserController = asyncHandler(async (req, res) => {
 // @access protected
 const getUserController = asyncHandler(async (req, res) => {
   if (!req.user) {
-    return res.status(200).json({ message: UNAUTHORIZED_ERR });
+    return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
   const {
     _id,

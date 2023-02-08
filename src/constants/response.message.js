@@ -13,3 +13,8 @@ exports.MAIL_SENT_SUCCESS = "Verification mail sent to registerd email.";
 exports.VERIFICATION_FAILED_ERR = "Verification code is invalid.";
 exports.TOKEN_VERIFY_SUCCESS = "Token verified successfully";
 exports.UNAUTHORIZED_ERR = "You are not authorized.";
+
+// Business routes responses
+exports.BUSINESS_DETAILS_ADDED = "Successfully added business details.";
+exports.BUSINESS_DETAILS_USER_NOT_FOUND =
+  "Business details for this user was not found.";
