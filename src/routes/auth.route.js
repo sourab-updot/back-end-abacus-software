@@ -3,8 +3,9 @@ const {
   signinUserController,
   registerUserController,
   verifyUserController,
-  verifyTokenController,
+  getUserController,
 } = require("../controllers/user.controller");
+const authHandler = require("../middlewares/auth.middleware");
 const { uploadUserImage } = require("../middlewares/fileUpload.middleware");
 
 //User Register Endpoint
@@ -20,7 +21,6 @@ router.post("/signin", signinUserController);
 // User verification endpoint
 router.post("/verify", verifyUserController);
 
-// Verify user token
-router.post("/token", verifyTokenController);
-
+// Get user by emp_id
+router.get("/getuser", authHandler, getUserController);
 module.exports = router;
