@@ -57,6 +57,9 @@ const UserSchema = new Schema(
       type: Number,
       default: 0,
     },
+    verification_code: {
+      type: String,
+    },
     lastVisited: { type: Date, default: new Date() },
   },
   {

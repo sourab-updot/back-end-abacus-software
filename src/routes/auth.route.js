@@ -2,6 +2,7 @@ const router = require("express").Router();
 const {
   signinUserController,
   registerUserController,
+  verifyUserController,
 } = require("../controllers/user.controller");
 const { uploadUserImage } = require("../middlewares/fileUpload.middleware");
 
@@ -12,7 +13,10 @@ router.post(
   registerUserController
 );
 
-// User Signin Endpoint
+// User signin endpoint
 router.post("/signin", signinUserController);
+
+// User verification endpoint
+router.post("/verify", verifyUserController);
 
 module.exports = router;

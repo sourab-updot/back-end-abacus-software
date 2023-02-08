@@ -2,18 +2,27 @@ const User = require("../models/user.model");
 const {
   registerValidation,
   signinValidation,
+  verificationValidation,
 } = require("../validations/user.validations");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const { uploadFileToS3 } = require("../configs/aws.s3");
-const { randomiseFileName } = require("../utility/randomFileName");
+const {
+  randomBytesGenerator,
+  randomIntGenerator,
+} = require("../utility/randomCryptoGenerator");
 const {
   NOT_UNIQUE_EMAIL_ERR,
   USER_REGISTERED,
   USERNAME_NOT_FOUND_ERR,
   PASSWORD_NOT_VALID_ERR,
   USER_ACCESS_GRANTED,
+  MAIL_FAILED_ERR,
+  MAIL_SENT_SUCCESS,
+  USER_NOT_FOUND_ERR,
+  VERIFICATION_FAILED_ERR,
 } = require("../constants/response.message");
+const { mailTransporter } = require("../configs/mail.transporter");
 
 // @desc Create user
 // @route /api/user/register
@@ -44,7 +53,7 @@ const registerUserController = asyncHandler(async (req, res) => {
     businessId,
   } = req.body;
 
-  const imageFileName = randomiseFileName(16);
+  const imageFileName = randomBytesGenerator(16);
   const imageFile = req.file;
 
   const newUser = new User({
@@ -87,7 +96,54 @@ const signinUserController = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: PASSWORD_NOT_VALID_ERR });
   }
 
-  res.status(200).json({ message: USER_ACCESS_GRANTED });
+  // Create verification code
+  const _verificationCode = randomIntGenerator(3);
+  // Save user tabel
+  user.verification_code = _verificationCode;
+  await user.save();
+
+  // Send code via email
+  const mailOptions = {
+    from: "sourab@updot.in",
+    to: user.email,
+    subject: "SignIn Verification Code",
+    text: `Greetings from Abacus. Here is your verification code: ${_verificationCode}`,
+  };
+
+  const mailErr = mailTransporter(mailOptions);
+  if (mailErr) {
+    return res.status(400).json({ message: MAIL_FAILED_ERR });
+  }
+  res.status(200).json({ message: MAIL_SENT_SUCCESS });
 });
 
-module.exports = { registerUserController, signinUserController };
+// @desc Verify user
+// @route /api/user/verify
+// @access protected
+const verifyUserController = asyncHandler(async (req, res) => {
+  const { error } = verificationValidation.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
+  // To check username exists
+  const user = await User.findOne({ emp_id: req.body.userId });
+  if (!user) {
+    return res.status(400).json({ message: USER_NOT_FOUND_ERR });
+  }
+  const validCode =
+    req.body.verification_code === user.verification_code ? true : false;
+
+  if (!validCode) {
+    return res.status(400).json({ message: VERIFICATION_FAILED_ERR });
+  }
+  res.status(200).json({
+    message: USER_ACCESS_GRANTED,
+  });
+});
+
+module.exports = {
+  registerUserController,
+  signinUserController,
+  verifyUserController,
+};

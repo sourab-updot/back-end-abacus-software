@@ -20,4 +20,13 @@ const signinValidation = Joi.object({
   password: Joi.string().min(4).required(),
 });
 
-module.exports = { registerValidation, signinValidation };
+const verificationValidation = Joi.object({
+  userId: Joi.string().required(),
+  verification_code: Joi.string().required(),
+});
+
+module.exports = {
+  registerValidation,
+  signinValidation,
+  verificationValidation,
+};
