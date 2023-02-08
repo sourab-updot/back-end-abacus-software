@@ -2,11 +2,15 @@ const router = require("express").Router();
 const {
   signinUserController,
   registerUserController,
-  uploadImage,
 } = require("../controllers/user.controller");
+const { uploadUserImage } = require("../middlewares/fileUpload.middleware");
 
 //User Register Endpoint
-router.post("/register", uploadImage.single("avatar"), registerUserController);
+router.post(
+  "/register",
+  uploadUserImage.single("avatar"),
+  registerUserController
+);
 
 // User Signin Endpoint
 router.post("/signin", signinUserController);

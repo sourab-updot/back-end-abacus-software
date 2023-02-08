@@ -5,7 +5,6 @@ const {
 } = require("../validations/user.validations");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
-const multer = require("multer");
 const { uploadFileToS3 } = require("../configs/aws.s3");
 const { randomiseFileName } = require("../utility/randomFileName");
 const {
@@ -15,10 +14,6 @@ const {
   PASSWORD_NOT_VALID_ERR,
   USER_ACCESS_GRANTED,
 } = require("../constants/response.message");
-
-// Image Storage
-const storage = multer.memoryStorage();
-const uploadImage = multer({ storage: storage });
 
 // @desc Create user
 // @route /api/user/register
@@ -95,4 +90,4 @@ const signinUserController = asyncHandler(async (req, res) => {
   res.status(200).json({ message: USER_ACCESS_GRANTED });
 });
 
-module.exports = { uploadImage, registerUserController, signinUserController };
+module.exports = { registerUserController, signinUserController };
