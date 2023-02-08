@@ -11,3 +11,4 @@ exports.NOT_UNIQUE_EMAIL_ERR = "Email already exists.";
 exports.MAIL_FAILED_ERR = "Something went wrong in sending verficatiom mail.";
 exports.MAIL_SENT_SUCCESS = "Verification mail sent to registerd email.";
 exports.VERIFICATION_FAILED_ERR = "Verification code is invalid.";
+exports.TOKEN_VERIFY_SUCCESS = "Token verified successfully";

@@ -3,6 +3,7 @@ const {
   registerValidation,
   signinValidation,
   verificationValidation,
+  tokenValidation,
 } = require("../validations/user.validations");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
@@ -21,8 +22,10 @@ const {
   MAIL_SENT_SUCCESS,
   USER_NOT_FOUND_ERR,
   VERIFICATION_FAILED_ERR,
+  TOKEN_VERIFY_SUCCESS,
 } = require("../constants/response.message");
 const { mailTransporter } = require("../configs/mail.transporter");
+const { signToken, verifyToken } = require("../configs/jwt.config");
 
 // @desc Create user
 // @route /api/user/register
@@ -127,7 +130,7 @@ const verifyUserController = asyncHandler(async (req, res) => {
   }
 
   // To check username exists
-  const user = await User.findOne({ emp_id: req.body.userId });
+  const user = await User.findOne({ emp_id: req.body.emp_id });
   if (!user) {
     return res.status(400).json({ message: USER_NOT_FOUND_ERR });
   }
@@ -137,8 +140,29 @@ const verifyUserController = asyncHandler(async (req, res) => {
   if (!validCode) {
     return res.status(400).json({ message: VERIFICATION_FAILED_ERR });
   }
+
+  // Sign JWT and get token
+  const token = signToken({
+    emp_id: user.emp_id,
+    username: user.username,
+    email: user.email,
+  });
+
   res.status(200).json({
     message: USER_ACCESS_GRANTED,
+    token: token,
+  });
+});
+
+const verifyTokenController = asyncHandler(async (req, res) => {
+  const { error } = tokenValidation.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+  const result = verifyToken(req.body.token);
+  res.status(200).json({
+    message: TOKEN_VERIFY_SUCCESS,
+    data: result,
   });
 });
 
@@ -146,4 +170,5 @@ module.exports = {
   registerUserController,
   signinUserController,
   verifyUserController,
+  verifyTokenController,
 };

@@ -21,12 +21,16 @@ const signinValidation = Joi.object({
 });
 
 const verificationValidation = Joi.object({
-  userId: Joi.string().required(),
+  emp_id: Joi.string().required(),
   verification_code: Joi.string().required(),
 });
 
+const tokenValidation = Joi.object({
+  token: Joi.string().required(),
+});
 module.exports = {
   registerValidation,
   signinValidation,
   verificationValidation,
+  tokenValidation,
 };
