@@ -8,6 +8,13 @@ const asyncHandler = require("express-async-handler");
 const multer = require("multer");
 const { uploadFileToS3 } = require("../configs/aws.s3");
 const { randomiseFileName } = require("../utility/randomFileName");
+const {
+  NOT_UNIQUE_EMAIL_ERR,
+  USER_REGISTERED,
+  USERNAME_NOT_FOUND_ERR,
+  PASSWORD_NOT_VALID_ERR,
+  USER_ACCESS_GRANTED,
+} = require("../constants/response.message");
 
 // Image Storage
 const storage = multer.memoryStorage();
@@ -26,7 +33,7 @@ const registerUserController = asyncHandler(async (req, res) => {
   // To check unique emails
   const emailExist = await User.findOne({ email: req.body.email });
   if (emailExist) {
-    return res.status(400).json({ message: "Email already exists!" });
+    return res.status(400).json({ message: NOT_UNIQUE_EMAIL_ERR });
   }
 
   // Request data
@@ -59,7 +66,7 @@ const registerUserController = asyncHandler(async (req, res) => {
   });
   await uploadFileToS3(imageFile, imageFileName);
   await newUser.save();
-  res.status(200).json({ message: "User created successfully!" });
+  res.status(200).json({ message: USER_REGISTERED });
 });
 
 // @desc Signin user
@@ -75,19 +82,17 @@ const signinUserController = asyncHandler(async (req, res) => {
   // To check username exists
   const user = await User.findOne({ username: req.body.username });
   if (!user) {
-    return res
-      .status(400)
-      .json({ message: "No user found with this username. Try again." });
+    return res.status(400).json({ message: USERNAME_NOT_FOUND_ERR });
   }
   const validPassword = await bcrypt.compareSync(
     req.body.password,
     user.password
   );
   if (!validPassword) {
-    return res.status(400).json({ message: "Password is invalid. Try again." });
+    return res.status(400).json({ message: PASSWORD_NOT_VALID_ERR });
   }
 
-  res.status(200).json({ message: "Access Granted." });
+  res.status(200).json({ message: USER_ACCESS_GRANTED });
 });
 
 module.exports = { uploadImage, registerUserController, signinUserController };

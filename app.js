@@ -8,6 +8,9 @@ const colors = require("colors");
 const authRoutes = require("./src/routes/auth.route");
 const db = require("./src/configs/database.config");
 const errorHandler = require("./src/middlewares/error.middleware");
+const {
+  API_ENDPOINT_NOT_FOUND_ERR,
+} = require("./src/constants/response.message");
 
 const app = express();
 db.connect();
@@ -21,6 +24,11 @@ app.use(errorHandler);
 
 // Route Middlewares
 app.use("/api/user", authRoutes);
+app.use("*", (req, res, next) => {
+  return res.status(404).json({
+    message: API_ENDPOINT_NOT_FOUND_ERR,
+  });
+});
 
 // Env vars
 const port = process.env.PORT;
