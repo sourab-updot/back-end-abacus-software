@@ -116,7 +116,10 @@ const signinUserController = asyncHandler(async (req, res) => {
   if (mailErr) {
     return res.status(400).json({ message: MAIL_FAILED_ERR });
   }
-  res.status(200).json({ message: MAIL_SENT_SUCCESS });
+  res.status(200).json({
+    employee_id: user.emp_id,
+    message: MAIL_SENT_SUCCESS,
+  });
 });
 
 // @desc Verify user
