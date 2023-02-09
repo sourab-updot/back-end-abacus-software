@@ -1,7 +1,7 @@
 const Business = require("../models/business.model");
 const User = require("../models/user.model");
 const asyncHandler = require("express-async-handler");
-const { addDetailsValidation } = require("../validations/business.validations");
+const { detailsValidation } = require("../validations/business.validations");
 const {
   USERNAME_NOT_FOUND_ERR,
   BUSINESS_DETAILS_ADDED,
@@ -15,7 +15,7 @@ const {
 // @access  Protected
 const addDetailController = asyncHandler(async (req, res) => {
   // Validate
-  const { error } = addDetailsValidation.validate(req.body);
+  const { error } = detailsValidation.validate(req.body);
   if (error) {
     return res.status(400).json({ message: error.details[0].message });
   }
@@ -70,6 +70,12 @@ const getDetailsByUserController = asyncHandler(async (req, res) => {
 // @route   /api/business/updateDetailsByUser
 // @access  Protected
 const updateDetailsByUserController = asyncHandler(async (req, res) => {
+  // Validate
+  const { error } = detailsValidation.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
   if (!req.user) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }

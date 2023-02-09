@@ -1,7 +1,7 @@
 const Joi = require("joi");
 
 // For user registration
-const addDetailsValidation = Joi.object({
+const detailsValidation = Joi.object({
   name: Joi.string().min(2).required(),
   phone_number: Joi.string().min(4).required(),
   mobile_number: Joi.string().min(4).required(),
@@ -17,4 +17,4 @@ const addDetailsValidation = Joi.object({
   date_format: Joi.string(),
 });
 
-module.exports = { addDetailsValidation };
+module.exports = { detailsValidation };
