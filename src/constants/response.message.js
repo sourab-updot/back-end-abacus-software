@@ -23,3 +23,8 @@ exports.BUSINESS_DETAILS_ALREADY_EXISTS =
 exports.BUSINESS_DETAILS_UPDATED = "Business details are updated by the user.";
 exports.BUSINESS_DETAILS_DELETED =
   "Business details deleted by the user successfully.";
+
+// Products route responses
+exports.PRODUCT_CREATED = "Product created successfully";
+exports.PRODUCT_IMAGES_COUNT_LIMIT_EXCEEDED =
+  "Cannot upload more than 5 images for a product.";

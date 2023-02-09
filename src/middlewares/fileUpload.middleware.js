@@ -4,4 +4,7 @@ const multer = require("multer");
 const storage = multer.memoryStorage();
 const uploadUserImage = multer({ storage: storage });
 
+const uploadProductImage = multer({ storage: storage });
+
 exports.uploadUserImage = uploadUserImage;
+exports.uploadProductImage = uploadProductImage;
