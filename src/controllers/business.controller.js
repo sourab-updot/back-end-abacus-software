@@ -27,6 +27,13 @@ const addDetailController = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: USERNAME_NOT_FOUND_ERR });
   }
 
+  const business = await Business.findOne({ user: user._id });
+  if (business) {
+    return res.status(400).json({
+      message: "Business details for this user already exists",
+    });
+  }
+
   const newBusinessDetails = new Business({
     user: user._id,
     ...req.body,
