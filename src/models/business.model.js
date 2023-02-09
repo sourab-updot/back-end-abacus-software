@@ -6,6 +6,7 @@ const BusinessSchema = new Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: [true, "user is required"],
+      ref: "user",
     },
     name: {
       type: String,

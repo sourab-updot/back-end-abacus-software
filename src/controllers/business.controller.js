@@ -8,6 +8,7 @@ const {
   BUSINESS_DETAILS_USER_NOT_FOUND,
   BUSINESS_DETAILS_UPDATED,
   BUSINESS_DETAILS_DELETED,
+  UNAUTHORIZED_ERR,
 } = require("../constants/response.message");
 
 // @desc    add details
@@ -37,7 +38,7 @@ const addDetailController = asyncHandler(async (req, res) => {
   }
 
   const newBusinessDetails = new Business({
-    user: user._id,
+    user: user._id.toString(),
     ...req.body,
   });
   await newBusinessDetails.save();
@@ -57,7 +58,16 @@ const getDetailsByUserController = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: USERNAME_NOT_FOUND_ERR });
   }
 
-  const business = await Business.findOne({ user: user._id });
+  const business = await Business.findOne({ user: user._id }).populate({
+    path: "user",
+    select: [
+      "-password",
+      "-verification_code",
+      "-created_at",
+      "-updated_at",
+      "-__v",
+    ],
+  });
   if (!business) {
     return res.status(400).json({
       message: BUSINESS_DETAILS_USER_NOT_FOUND,
