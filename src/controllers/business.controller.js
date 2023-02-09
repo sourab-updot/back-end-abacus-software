@@ -10,7 +10,7 @@ const {
   BUSINESS_DETAILS_DELETED,
 } = require("../constants/response.message");
 
-// @desc    add detailes
+// @desc    add details
 // @route   /api/business/addDetails
 // @access  Protected
 const addDetailController = asyncHandler(async (req, res) => {
