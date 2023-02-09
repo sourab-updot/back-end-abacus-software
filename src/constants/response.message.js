@@ -18,3 +18,6 @@ exports.UNAUTHORIZED_ERR = "You are not authorized.";
 exports.BUSINESS_DETAILS_ADDED = "Successfully added business details.";
 exports.BUSINESS_DETAILS_USER_NOT_FOUND =
   "Business details for this user was not found.";
+exports.BUSINESS_DETAILS_ALREADY_EXISTS =
+  "Business details for this user already exists";
+exports.BUSINESS_DETAILS_UPDATED = "Business details are updated by the user.";
