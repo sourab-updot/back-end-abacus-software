@@ -52,6 +52,7 @@ const addProductController = asyncHandler(async (req, res) => {
     created_by: user._id.toString(),
     updated_by: user._id.toString(),
     images: imageFiles,
+    // This is temprorary category
     category: "63e4b611e8c84af2bb8ae0ba",
     ...req.body,
   });
