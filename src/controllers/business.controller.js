@@ -80,12 +80,6 @@ const getDetailsByUserController = asyncHandler(async (req, res) => {
 // @route   /api/business/updateDetailsByUser
 // @access  Protected
 const updateDetailsByUserController = asyncHandler(async (req, res) => {
-  // Validate
-  const { error } = detailsValidation.validate(req.body);
-  if (error) {
-    return res.status(400).json({ message: error.details[0].message });
-  }
-
   if (!req.user) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
