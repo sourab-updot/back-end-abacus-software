@@ -130,7 +130,7 @@ const verifyUserController = asyncHandler(async (req, res) => {
   });
 
   // removing code from db after verification is successful
-  user.verification_code = "";
+  user.verification_code = "@#%$&%$#%@%^$%$&^*^&*%^%^%@%@%%@%";
   await user.save();
 
   res.status(200).json({
