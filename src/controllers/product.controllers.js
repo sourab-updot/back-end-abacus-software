@@ -32,9 +32,13 @@ const addProductController = asyncHandler(async (req, res) => {
 
   // Create image data and upload to s3
   const reqFiles = req.files;
+
+  // Checking for limits
   if (reqFiles.length > 4) {
     return res(400).json({ message: PRODUCT_IMAGES_COUNT_LIMIT_EXCEEDED });
   }
+
+  // Separating data for db and S3
   const imageFiles = [];
   if (reqFiles.length > 0) {
     for (let i = 0; i < reqFiles.length; i++) {
@@ -46,8 +50,8 @@ const addProductController = asyncHandler(async (req, res) => {
       await uploadFileToS3(reqFiles[i], filename);
     }
   }
-  // Create product
 
+  // Create product
   const newProduct = new Product({
     created_by: user._id.toString(),
     updated_by: user._id.toString(),
@@ -59,6 +63,8 @@ const addProductController = asyncHandler(async (req, res) => {
   await newProduct.save();
   res.status(200).json({ message: PRODUCT_CREATED });
 });
+
+const getAllProductsController = asyncHandler(async (req, res) => {});
 
 module.exports = {
   addProductController,
