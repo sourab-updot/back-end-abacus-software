@@ -21,3 +21,5 @@ exports.BUSINESS_DETAILS_USER_NOT_FOUND =
 exports.BUSINESS_DETAILS_ALREADY_EXISTS =
   "Business details for this user already exists";
 exports.BUSINESS_DETAILS_UPDATED = "Business details are updated by the user.";
+exports.BUSINESS_DETAILS_DELETED =
+  "Business details deleted by the user successfully.";

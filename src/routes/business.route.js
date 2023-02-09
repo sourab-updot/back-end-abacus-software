@@ -3,6 +3,7 @@ const {
   addDetailController,
   getDetailsByUserController,
   updateDetailsByUserController,
+  deleteDetailsByUserController,
 } = require("../controllers/business.controller");
 const authHandler = require("../middlewares/auth.middleware");
 
@@ -14,5 +15,12 @@ router.get("/getDetailsByUser", authHandler, getDetailsByUserController);
 
 // Update business details by user
 router.post("/updateDetailsByUser", authHandler, updateDetailsByUserController);
+
+// Update business details by user
+router.delete(
+  "/deleteDetailsByUser",
+  authHandler,
+  deleteDetailsByUserController
+);
 
 module.exports = router;

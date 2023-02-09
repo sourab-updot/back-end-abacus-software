@@ -7,6 +7,7 @@ const {
   BUSINESS_DETAILS_ADDED,
   BUSINESS_DETAILS_USER_NOT_FOUND,
   BUSINESS_DETAILS_UPDATED,
+  BUSINESS_DETAILS_DELETED,
 } = require("../constants/response.message");
 
 // @desc    add detailes
@@ -90,8 +91,32 @@ const updateDetailsByUserController = asyncHandler(async (req, res) => {
   }
   res.status(200).json({ message: BUSINESS_DETAILS_UPDATED });
 });
+
+// @desc    delete details by userId
+// @route   /api/business/deleteDetailsByUser
+// @access  Protected
+const deleteDetailsByUserController = asyncHandler(async (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: UNAUTHORIZED_ERR });
+  }
+
+  const user = await User.findOne({ _id: req.user._id });
+  if (!user) {
+    return res.status(400).json({ message: USERNAME_NOT_FOUND_ERR });
+  }
+
+  const business = await Business.findOneAndRemove({ user: user._id });
+
+  if (!business) {
+    return res.status(400).json({
+      message: BUSINESS_DETAILS_USER_NOT_FOUND,
+    });
+  }
+  res.status(200).json({ message: BUSINESS_DETAILS_DELETED });
+});
 module.exports = {
   addDetailController,
   getDetailsByUserController,
   updateDetailsByUserController,
+  deleteDetailsByUserController,
 };
