@@ -22,8 +22,8 @@ exports.addCategoryController = asyncHandler(async (req, res) => {
   }
 
   const newCategory = await new Category({
-    created_by: req.user._id,
-    updated_by: req.user._id,
+    created_by: req.user._id.toString(),
+    updated_by: req.user._id.toString(),
     ...req.body,
   });
 
@@ -81,7 +81,7 @@ exports.updateCategoryController = asyncHandler(async (req, res) => {
 
   // Get category
   await Category.findByIdAndUpdate(req.query.id, {
-    updated_by: req.user._id,
+    updated_by: req.user._id.toString(),
     ...req.body,
   }).catch(() => res.status(400).json({ message: CATEGORY_BY_ID_NOT_FOUND }));
 
