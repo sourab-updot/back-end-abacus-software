@@ -28,3 +28,8 @@ exports.BUSINESS_DETAILS_DELETED =
 exports.PRODUCT_CREATED = "Product created successfully";
 exports.PRODUCT_IMAGES_COUNT_LIMIT_EXCEEDED =
   "Cannot upload more than 5 images for a product.";
+exports.NO_PRODUCTS_FOUND = "Inventory is empty.";
+exports.NO_PRODUCT_FOUND_ID = "Cannot find any product with this id.";
+exports.NO_PRODUCTS_FOUND_CAT = "Cannot find any product under this category.";
+exports.UPDATED_PRODUCT_DETAILS = "Product updated successfully";
+exports.REMOVED_PRODUCT = "Product removed from inventory successfully";
