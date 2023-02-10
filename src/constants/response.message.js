@@ -29,6 +29,8 @@ exports.BUSINESS_DETAILS_DELETED =
 exports.PRODUCT_CREATED = "Product created successfully";
 exports.PRODUCT_IMAGES_COUNT_LIMIT_EXCEEDED =
   "Cannot upload more than 5 images for a product.";
+exports.PRODUCT_ID_REQUIRED = "Product ID is required";
+exports.PRODUCT_CAT_REQUIRED = "Product category is required";
 exports.NO_PRODUCTS_FOUND = "Inventory is empty.";
 exports.NO_PRODUCT_FOUND_ID = "Cannot find any product with this id.";
 exports.NO_PRODUCTS_FOUND_CAT = "Cannot find any product under this category.";
@@ -37,9 +39,15 @@ exports.REMOVED_PRODUCT = "Product removed from inventory successfully";
 
 // Category
 exports.CATEGORY_CREATED = "Category created successfully.";
+exports.CATEGORY_ID_REQUIRED = "Category ID is required";
 exports.CATEGORY_BY_ID_NOT_FOUND = "No category found with this ID";
 exports.CATEGORY_NOT_FOUND = "No category found.";
 exports.CATEGORY_UPDATED = "Category updated successfully.";
 exports.CATEGORY_DELETED = "Category deleted successfully.";
 
 // Payment
+exports.PAYMENT_CREATED = "Payment record created successfully.";
+exports.PAYMENT_UPDATED = "Payment record updated successfully";
+exports.PAYMENT_DELETED = "Payment record deleted successfully.";
+exports.PAYMENT_NOT_FOUND = "No payment record found.";
+exports.PAYMENT_ID_NOT_FOUND = "Payment Id is required.";
