@@ -15,7 +15,7 @@ const authRoutes = require("./src/routes/auth.routes");
 const businessRoutes = require("./src/routes/business.routes");
 const productRoutes = require("./src/routes/product.routes");
 const categoryRoutes = require("./src/routes/category.routes");
-
+const paymentRoutes = require("./src/routes/payment.routes");
 // Configs
 const app = express();
 db.connect();
@@ -28,11 +28,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(errorHandler);
 
 // Route Middlewares
-app.use("/api/user", authRoutes);
-app.use("/api/business", businessRoutes);
+app.use("/api/users", authRoutes);
+app.use("/api/businesses", businessRoutes);
 app.use("/api/products", productRoutes);
-app.use("/api/category", categoryRoutes);
-
+app.use("/api/categories", categoryRoutes);
+app.use("/api/payments", paymentRoutes);
 // 404 route
 app.use("*", (req, res, next) => {
   return res.status(404).json({

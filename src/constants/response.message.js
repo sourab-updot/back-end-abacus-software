@@ -41,3 +41,5 @@ exports.CATEGORY_BY_ID_NOT_FOUND = "No category found with this ID";
 exports.CATEGORY_NOT_FOUND = "No category found.";
 exports.CATEGORY_UPDATED = "Category updated successfully.";
 exports.CATEGORY_DELETED = "Category deleted successfully.";
+
+// Payment
