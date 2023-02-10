@@ -5,7 +5,6 @@ const { productValidation } = require("../validations/product.validation");
 const {
   PRODUCT_CREATED,
   UNAUTHORIZED_ERR,
-  USERNAME_NOT_FOUND_ERR,
   PRODUCT_IMAGES_COUNT_LIMIT_EXCEEDED,
   NO_PRODUCTS_FOUND,
   NO_PRODUCT_FOUND_ID,
@@ -14,6 +13,7 @@ const {
   REMOVED_PRODUCT,
 } = require("../constants/response.message");
 const { uploadFileToS3 } = require("../configs/aws.s3");
+const { _validateUser } = require("../middlewares/_validate.middleware");
 
 // @desc    add products
 // @route   /api/products/addProduct
@@ -25,14 +25,10 @@ const addProductController = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: error.details[0].message });
   }
 
-  // Check for authorized user
-  if (!req.user) {
+  // Validate user
+  const validUser = _validateUser(req, User);
+  if (!validUser) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
-  }
-  //  Check if user exists in db
-  const user = await User.findOne({ _id: req.user._id });
-  if (!user) {
-    return res.status(400).json({ message: USERNAME_NOT_FOUND_ERR });
   }
 
   // Create image data and upload to s3
@@ -50,7 +46,7 @@ const addProductController = asyncHandler(async (req, res) => {
       let filename = `${req.body.name.replaceAll(" ", "_")}_${Date.now()}`;
       imageFiles.push({
         filename: filename,
-        user: user._id.toString(),
+        user: req.user._id.toString(),
       });
       await uploadFileToS3(reqFiles[i], filename);
     }
@@ -58,8 +54,8 @@ const addProductController = asyncHandler(async (req, res) => {
 
   // Create product
   const newProduct = new Product({
-    created_by: user._id.toString(),
-    updated_by: user._id.toString(),
+    created_by: req.user._id.toString(),
+    updated_by: req.user._id.toString(),
     images: imageFiles,
     // This is temprorary category
     category: "63e4b611e8c84af2bb8ae0ba",
@@ -73,14 +69,10 @@ const addProductController = asyncHandler(async (req, res) => {
 // @route   /api/products/getAllProducts
 // @access  Protected
 const getAllProductsController = asyncHandler(async (req, res) => {
-  // Check for authorized user
-  if (!req.user) {
+  // Validate user
+  const validUser = _validateUser(req, User);
+  if (!validUser) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
-  }
-  //  Check if user exists in db
-  const user = await User.findOne({ _id: req.user._id });
-  if (!user) {
-    return res.status(400).json({ message: USERNAME_NOT_FOUND_ERR });
   }
 
   // Get products
@@ -97,14 +89,10 @@ const getAllProductsController = asyncHandler(async (req, res) => {
 // @route   /api/products/getProductById
 // @access  Protected
 const getProductByIdController = asyncHandler(async (req, res) => {
-  // Check for authorized user
-  if (!req.user) {
+  // Validate user
+  const validUser = _validateUser(req, User);
+  if (!validUser) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
-  }
-  //  Check if user exists in db
-  const user = await User.findOne({ _id: req.user._id });
-  if (!user) {
-    return res.status(400).json({ message: USERNAME_NOT_FOUND_ERR });
   }
 
   // Get products
@@ -121,14 +109,10 @@ const getProductByIdController = asyncHandler(async (req, res) => {
 // @route   /api/products/getProductsByCategory
 // @access  Protected
 const getProductsByCatController = asyncHandler(async (req, res) => {
-  // Check for authorized user
-  if (!req.user) {
+  // Validate user
+  const validUser = _validateUser(req, User);
+  if (!validUser) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
-  }
-  //  Check if user exists in db
-  const user = await User.findOne({ _id: req.user._id });
-  if (!user) {
-    return res.status(400).json({ message: USERNAME_NOT_FOUND_ERR });
   }
 
   // Get products
@@ -145,14 +129,10 @@ const getProductsByCatController = asyncHandler(async (req, res) => {
 // @route   /api/products/updateProductById
 // @access  Protected
 const updateProductByIdController = asyncHandler(async (req, res) => {
-  // Check for authorized user
-  if (!req.user) {
+  // Validate user
+  const validUser = _validateUser(req, User);
+  if (!validUser) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
-  }
-  //  Check if user exists in db
-  const user = await User.findOne({ _id: req.user._id });
-  if (!user) {
-    return res.status(400).json({ message: USERNAME_NOT_FOUND_ERR });
   }
 
   // Create image data and upload to s3
@@ -170,7 +150,7 @@ const updateProductByIdController = asyncHandler(async (req, res) => {
       let filename = `${req.body.name.replaceAll(" ", "_")}_${Date.now()}`;
       imageFiles.push({
         filename: filename,
-        user: user._id.toString(),
+        user: req.user._id.toString(),
       });
       await uploadFileToS3(reqFiles[i], filename);
     }
@@ -178,7 +158,7 @@ const updateProductByIdController = asyncHandler(async (req, res) => {
 
   // update product
   const product = await Product.findByIdAndUpdate(req.query.id, {
-    updated_by: user._id.toString(),
+    updated_by: req.user._id.toString(),
     images: imageFiles,
     ...req.body,
   });
@@ -194,14 +174,10 @@ const updateProductByIdController = asyncHandler(async (req, res) => {
 // @route   /api/products/deleteProductById
 // @access  Protected
 const deleteProductByIdController = asyncHandler(async (req, res) => {
-  // Check for authorized user
-  if (!req.user) {
+  // Validate user
+  const validUser = _validateUser(req, User);
+  if (!validUser) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
-  }
-  //  Check if user exists in db
-  const user = await User.findOne({ _id: req.user._id });
-  if (!user) {
-    return res.status(400).json({ message: USERNAME_NOT_FOUND_ERR });
   }
 
   // delete product

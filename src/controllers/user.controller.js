@@ -26,6 +26,7 @@ const {
 } = require("../constants/response.message");
 const { mailTransporter } = require("../configs/mail.transporter");
 const { signToken } = require("../configs/jwt.config");
+const { _validateUser } = require("../middlewares/_validate.middleware");
 
 // @desc Create user
 // @route /api/user/register
@@ -144,9 +145,12 @@ const verifyUserController = asyncHandler(async (req, res) => {
 // @route /api/user/verify
 // @access protected
 const getUserController = asyncHandler(async (req, res) => {
-  if (!req.user) {
+  // Validate user
+  const validUser = _validateUser(req, User);
+  if (!validUser) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
+
   res.status(200).json({
     ...req.user._doc,
   });
