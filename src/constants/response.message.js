@@ -34,3 +34,10 @@ exports.NO_PRODUCT_FOUND_ID = "Cannot find any product with this id.";
 exports.NO_PRODUCTS_FOUND_CAT = "Cannot find any product under this category.";
 exports.UPDATED_PRODUCT_DETAILS = "Product updated successfully";
 exports.REMOVED_PRODUCT = "Product removed from inventory successfully";
+
+// Category
+exports.CATEGORY_CREATED = "Category created successfully.";
+exports.CATEGORY_BY_ID_NOT_FOUND = "No category found with this ID";
+exports.CATEGORY_NOT_FOUND = "No category found.";
+exports.CATEGORY_UPDATED = "Category updated successfully.";
+exports.CATEGORY_DELETED = "Category deleted successfully.";

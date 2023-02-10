@@ -2,7 +2,14 @@ const Category = require("../models/category.model");
 const User = require("../models/user.model");
 const asyncHandler = require("express-async-handler");
 const { _validateUser } = require("../middlewares/_validate.middleware");
-const { UNAUTHORIZED_ERR } = require("../constants/response.message");
+const {
+  UNAUTHORIZED_ERR,
+  CATEGORY_DELETED,
+  CATEGORY_BY_ID_NOT_FOUND,
+  CATEGORY_UPDATED,
+  CATEGORY_NOT_FOUND,
+  CATEGORY_CREATED,
+} = require("../constants/response.message");
 
 // @desc    add category controller
 // @route   /api/category/addCategory
@@ -22,7 +29,7 @@ exports.addCategoryController = asyncHandler(async (req, res) => {
 
   newCategory.save();
   res.status(200).json({
-    message: "Category created successfully.",
+    message: CATEGORY_CREATED,
   });
 });
 
@@ -38,7 +45,7 @@ exports.getCategoryByIdController = asyncHandler(async (req, res) => {
 
   // Get category
   const category = await Category.findById(req.query.id).catch(() =>
-    res.status(400).json({ message: "No category found with this ID" })
+    res.status(400).json({ message: CATEGORY_BY_ID_NOT_FOUND })
   );
 
   res.status(200).json(category);
@@ -56,7 +63,7 @@ exports.getAllCategoryController = asyncHandler(async (req, res) => {
 
   // Get category
   const category = await Category.find().catch(() =>
-    res.status(400).json({ message: "No category found." })
+    res.status(400).json({ message: CATEGORY_NOT_FOUND })
   );
 
   res.status(200).json(category);
@@ -76,11 +83,9 @@ exports.updateCategoryController = asyncHandler(async (req, res) => {
   await Category.findByIdAndUpdate(req.query.id, {
     updated_by: req.user._id,
     ...req.body,
-  }).catch(() =>
-    res.status(400).json({ message: "No category found with this ID." })
-  );
+  }).catch(() => res.status(400).json({ message: CATEGORY_BY_ID_NOT_FOUND }));
 
-  res.status(200).json({ message: "Category updated successfully." });
+  res.status(200).json({ message: CATEGORY_UPDATED });
 });
 
 // @desc    delete category by id controller
@@ -95,8 +100,8 @@ exports.deleteCategoryController = asyncHandler(async (req, res) => {
 
   // Get category
   await Category.findByIdAndDelete(req.query.id).catch(() =>
-    res.status(400).json({ message: "No category found with this ID." })
+    res.status(400).json({ message: CATEGORY_BY_ID_NOT_FOUND })
   );
 
-  res.status(200).json({ message: "Category deleted successfully." });
+  res.status(200).json({ message: CATEGORY_DELETED });
 });
