@@ -7,7 +7,7 @@ const {
   updateProductByIdController,
   deleteProductByIdController,
 } = require("../controllers/product.controllers");
-const authHandler = require("../middlewares/auth.middleware");
+const authHandler = require("../middlewares/token.middleware");
 const { uploadProductImage } = require("../middlewares/fileUpload.middleware");
 
 //  Add product

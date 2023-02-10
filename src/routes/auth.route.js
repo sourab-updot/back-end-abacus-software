@@ -6,7 +6,7 @@ const {
   getUserController,
   updateUserController,
 } = require("../controllers/user.controller");
-const authHandler = require("../middlewares/auth.middleware");
+const authHandler = require("../middlewares/token.middleware");
 const { uploadUserImage } = require("../middlewares/fileUpload.middleware");
 
 //User Register Endpoint

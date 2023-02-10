@@ -5,7 +5,7 @@ const {
   updateDetailsByUserController,
   deleteDetailsByUserController,
 } = require("../controllers/business.controller");
-const authHandler = require("../middlewares/auth.middleware");
+const authHandler = require("../middlewares/token.middleware");
 
 //  Added business details
 router.post("/addDetails", authHandler, addDetailController);
