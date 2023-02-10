@@ -28,7 +28,7 @@ router.get("/getProductById", authHandler, getProductByIdController);
 router.get("/getProductsByCategory", authHandler, getProductsByCatController);
 
 // Update product by Id
-router.put(
+router.patch(
   "/updateProductById",
   authHandler,
   uploadProductImage.array("images"),

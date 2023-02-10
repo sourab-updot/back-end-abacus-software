@@ -26,7 +26,7 @@ router.post("/verify", verifyUserController);
 router.get("/getuser", authHandler, getUserController);
 
 // Update user
-router.put(
+router.patch(
   "/update",
   authHandler,
   uploadUserImage.single("avatar"),

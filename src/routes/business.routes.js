@@ -14,7 +14,11 @@ router.post("/addDetails", authHandler, addDetailController);
 router.get("/getDetailsByUser", authHandler, getDetailsByUserController);
 
 // Update business details by user
-router.put("/updateDetailsByUser", authHandler, updateDetailsByUserController);
+router.patch(
+  "/updateDetailsByUser",
+  authHandler,
+  updateDetailsByUserController
+);
 
 // Update business details by user
 router.delete(
