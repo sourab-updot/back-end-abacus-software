@@ -11,9 +11,10 @@ const {
 } = require("./src/constants/response.message");
 
 // Routes
-const authRoutes = require("./src/routes/auth.route");
-const businessRoutes = require("./src/routes/business.route");
-const productRoutes = require("./src/routes/product.route");
+const authRoutes = require("./src/routes/auth.routes");
+const businessRoutes = require("./src/routes/business.routes");
+const productRoutes = require("./src/routes/product.routes");
+const categoryRoutes = require("./src/routes/category.routes");
 
 // Configs
 const app = express();
@@ -30,7 +31,9 @@ app.use(errorHandler);
 app.use("/api/user", authRoutes);
 app.use("/api/business", businessRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/category", categoryRoutes);
 
+// 404 route
 app.use("*", (req, res, next) => {
   return res.status(404).json({
     message: API_ENDPOINT_NOT_FOUND_ERR,
