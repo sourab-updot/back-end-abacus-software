@@ -2,7 +2,14 @@ const PaymentModel = require("../models/payment.model");
 const UserModel = require("../models/user.model");
 const asyncHandler = require("express-async-handler");
 const { _validateUser } = require("../middlewares/_validate.middleware");
-const { UNAUTHORIZED_ERR } = require("../constants/response.message");
+const {
+  UNAUTHORIZED_ERR,
+  PAYMENT_CREATED,
+  PAYMENT_NOT_FOUND,
+  PAYMENT_ID_NOT_FOUND,
+  PAYMENT_UPDATED,
+  PAYMENT_DELETED,
+} = require("../constants/response.message");
 const { paymentValidation } = require("../validations/payment.validation");
 
 // @desc    add payment controller
@@ -28,7 +35,7 @@ exports.addPaymentController = asyncHandler(async (req, res) => {
 
   newPayment.save();
   res.status(200).json({
-    message: "Payment record created successfully.",
+    message: PAYMENT_CREATED,
   });
 });
 
@@ -43,7 +50,7 @@ exports.getAllPaymentsController = asyncHandler(async (req, res) => {
   }
 
   const allPayments = await PaymentModel.find().catch(() => {
-    res.status(400).json({ message: "No payment record found." });
+    res.status(400).json({ message: PAYMENT_NOT_FOUND });
   });
 
   res.status(200).json(allPayments);
@@ -60,11 +67,11 @@ exports.getPaymentByIdController = asyncHandler(async (req, res) => {
   }
 
   if (!req.query.id) {
-    return res.status(400).json({ message: "Payment Id is required." });
+    return res.status(400).json({ message: PAYMENT_ID_NOT_FOUND });
   }
 
   const paymentRecord = await PaymentModel.findById(req.query.id).catch(() => {
-    res.status(400).json({ message: "No payment record found." });
+    res.status(400).json({ message: PAYMENT_NOT_FOUND });
   });
 
   res.status(200).json(paymentRecord);
@@ -81,17 +88,17 @@ exports.updatePaymentController = asyncHandler(async (req, res) => {
   }
 
   if (!req.query.id) {
-    return res.status(400).json({ message: "Payment Id is required." });
+    return res.status(400).json({ message: PAYMENT_ID_NOT_FOUND });
   }
 
   await PaymentModel.findByIdAndUpdate(req.query.id, {
     updated_by: req.user._id.toString(),
     ...req.body,
   }).catch(() => {
-    res.status(400).json({ message: "No payment record found." });
+    res.status(400).json({ message: PAYMENT_NOT_FOUND });
   });
 
-  res.status(200).json("Payment record updated successfully");
+  res.status(200).json(PAYMENT_UPDATED);
 });
 
 // @desc    delete payment by id
@@ -105,12 +112,12 @@ exports.deletePaymentByIdController = asyncHandler(async (req, res) => {
   }
 
   if (!req.query.id) {
-    return res.status(400).json({ message: "Payment Id is required." });
+    return res.status(400).json({ message: PAYMENT_ID_NOT_FOUND });
   }
 
   await PaymentModel.findByIdAndDelete(req.query.id).catch(() => {
-    res.status(400).json({ message: "No payment record found." });
+    res.status(400).json({ message: PAYMENT_NOT_FOUND });
   });
 
-  res.status(200).json({ message: "Payment record deleted successfully." });
+  res.status(200).json({ message: PAYMENT_DELETED });
 });

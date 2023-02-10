@@ -9,6 +9,7 @@ const {
   CATEGORY_UPDATED,
   CATEGORY_NOT_FOUND,
   CATEGORY_CREATED,
+  CATEGORY_ID_REQUIRED,
 } = require("../constants/response.message");
 
 // @desc    add category controller
@@ -41,6 +42,11 @@ exports.getCategoryByIdController = asyncHandler(async (req, res) => {
   const validUser = _validateUser(req, User);
   if (!validUser) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
+  }
+
+  // checking for params id
+  if (!req.query.id) {
+    return res.status(400).json({ message: CATEGORY_ID_REQUIRED });
   }
 
   // Get category
@@ -79,6 +85,11 @@ exports.updateCategoryController = asyncHandler(async (req, res) => {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
 
+  // checking for params id
+  if (!req.query.id) {
+    return res.status(400).json({ message: CATEGORY_ID_REQUIRED });
+  }
+
   // Get category
   await Category.findByIdAndUpdate(req.query.id, {
     updated_by: req.user._id.toString(),
@@ -96,6 +107,11 @@ exports.deleteCategoryController = asyncHandler(async (req, res) => {
   const validUser = _validateUser(req, User);
   if (!validUser) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
+  }
+
+  // checking for params id
+  if (!req.query.id) {
+    return res.status(400).json({ message: CATEGORY_ID_REQUIRED });
   }
 
   // Get category

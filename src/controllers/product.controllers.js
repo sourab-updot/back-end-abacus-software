@@ -11,6 +11,8 @@ const {
   NO_PRODUCTS_FOUND_CAT,
   UPDATED_PRODUCT_DETAILS,
   REMOVED_PRODUCT,
+  PRODUCT_ID_REQUIRED,
+  PRODUCT_CAT_REQUIRED,
 } = require("../constants/response.message");
 const { uploadFileToS3 } = require("../configs/aws.s3");
 const { _validateUser } = require("../middlewares/_validate.middleware");
@@ -95,6 +97,11 @@ const getProductByIdController = asyncHandler(async (req, res) => {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
 
+  // checking for params id
+  if (!req.query.id) {
+    return res.status(400).json({ message: PRODUCT_ID_REQUIRED });
+  }
+
   // Get products
   const product = await Product.findById(req.query.id);
 
@@ -115,6 +122,11 @@ const getProductsByCatController = asyncHandler(async (req, res) => {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
 
+  // checking for params id
+  if (!req.query.category) {
+    return res.status(400).json({ message: PRODUCT_CAT_REQUIRED });
+  }
+
   // Get products
   const products = await Product.find({ category: req.query.category });
 
@@ -133,6 +145,11 @@ const updateProductByIdController = asyncHandler(async (req, res) => {
   const validUser = _validateUser(req, User);
   if (!validUser) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
+  }
+
+  // checking for params id
+  if (!req.query.id) {
+    return res.status(400).json({ message: PRODUCT_ID_REQUIRED });
   }
 
   // Create image data and upload to s3
@@ -178,6 +195,11 @@ const deleteProductByIdController = asyncHandler(async (req, res) => {
   const validUser = _validateUser(req, User);
   if (!validUser) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
+  }
+
+  // checking for params id
+  if (!req.query.id) {
+    return res.status(400).json({ message: PRODUCT_ID_REQUIRED });
   }
 
   // delete product
