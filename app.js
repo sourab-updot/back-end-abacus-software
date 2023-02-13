@@ -22,7 +22,11 @@ const app = express();
 db.connect();
 
 // CORS
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+);
 
 // Body Parser middlewares
 app.use(express.json());
