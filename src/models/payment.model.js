@@ -13,13 +13,10 @@ const ProductSchema = new Schema(
       required: [true, "updator of product is required"],
       ref: "user",
     },
-    company_name: {
-      type: String,
-      required: [true, "company name is required"],
-    },
-    representative_name: {
-      type: String,
-      required: [true, "representative name is required"],
+    client: {
+      type: Schema.Types.ObjectId,
+      required: [true, "creator of product is required"],
+      ref: "client",
     },
     date: {
       type: Date,
