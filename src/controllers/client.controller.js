@@ -117,6 +117,11 @@ exports.getAllClientsByIdController = asyncHandler(async (req, res) => {
 // @access  Protected
 
 exports.updateClientController = asyncHandler(async (req, res) => {
+  // Validate req body
+  const { error } = clientValidation.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
   // Validate user
   const validUser = _validateUser(req, UserModel);
   if (!validUser) {
