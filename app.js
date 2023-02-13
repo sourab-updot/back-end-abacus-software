@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const colors = require("colors");
+const cors = require("cors");
 
 // Import local modules
 const db = require("./src/configs/database.config");
@@ -19,6 +20,9 @@ const paymentRoutes = require("./src/routes/payment.routes");
 // Configs
 const app = express();
 db.connect();
+
+// CORS
+app.use(cors());
 
 // Body Parser middlewares
 app.use(express.json());
