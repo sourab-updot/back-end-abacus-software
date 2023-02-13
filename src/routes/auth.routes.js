@@ -5,6 +5,7 @@ const {
   verifyUserController,
   getUserController,
   updateUserController,
+  getAllUsersController,
 } = require("../controllers/user.controller");
 const authHandler = require("../middlewares/token.middleware");
 const { uploadUserImage } = require("../middlewares/fileUpload.middleware");
@@ -24,6 +25,9 @@ router.post("/verify", verifyUserController);
 
 // Get user by emp_id
 router.get("/getuser", authHandler, getUserController);
+
+// Get all users
+router.get("/getAllUsers", authHandler, getAllUsersController);
 
 // Update user
 router.patch(

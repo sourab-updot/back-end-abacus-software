@@ -11,9 +11,11 @@ const authHandler = asyncHandler(async (req, res, next) => {
     try {
       // Get token from header
       const decoded = verifyToken(req.headers.authorization.split(" ")[1]);
-      req.user = await User.findOne({ emp_id: decoded.emp_id }).select(
-        "-password"
-      );
+      req.user = await User.findOne({ emp_id: decoded.emp_id }).select([
+        "-password",
+        "-verification_code",
+        "-__v",
+      ]);
       next();
     } catch (error) {
       console.log(error);

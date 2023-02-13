@@ -23,6 +23,7 @@ const {
   VERIFICATION_FAILED_ERR,
   UNAUTHORIZED_ERR,
   USER_UPDATED,
+  USERS_NOT_FOUND,
 } = require("../constants/response.message");
 const { mailTransporter } = require("../configs/mail.transporter");
 const { signToken } = require("../configs/jwt.config");
@@ -156,6 +157,25 @@ const getUserController = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc get all user
+// @route /api/user/getAllUsers
+// @access protected
+const getAllUsersController = asyncHandler(async (req, res) => {
+  // Validate user
+  const validUser = _validateUser(req, User);
+  if (!validUser) {
+    return res.status(401).json({ message: UNAUTHORIZED_ERR });
+  }
+
+  const usersList = await User.find()
+    .select(["-password", "-verification_code", "-__v"])
+    .catch((err) => {
+      return res.status(400).json({ message: USERS_NOT_FOUND, err });
+    });
+
+  res.status(200).json(usersList);
+});
+
 // @desc update user
 // @route /api/user/update
 // @access protected
@@ -200,5 +220,6 @@ module.exports = {
   signinUserController,
   verifyUserController,
   getUserController,
+  getAllUsersController,
   updateUserController,
 };
