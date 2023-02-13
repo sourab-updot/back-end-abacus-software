@@ -150,17 +150,24 @@ const updateProductByIdController = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: PRODUCT_ID_REQUIRED });
   }
 
+  const product = await Product.findById(req.query.id).exec();
+
+  // Check for product exists
+  if (!product) {
+    return res.status(400).json({ message: NO_PRODUCT_FOUND_ID });
+  }
+
   // Create image data and upload to s3
   const reqFiles = req.files;
 
   // Checking for limits
-  if (reqFiles.length > 4) {
-    return res(400).json({ message: PRODUCT_IMAGES_COUNT_LIMIT_EXCEEDED });
-  }
-
-  // Separating data for db and S3
-  const imageFiles = [];
   if (reqFiles.length > 0) {
+    if (reqFiles.length > 4) {
+      return res(400).json({ message: PRODUCT_IMAGES_COUNT_LIMIT_EXCEEDED });
+    }
+
+    // Separating data for db and S3
+    const imageFiles = [];
     for (let i = 0; i < reqFiles.length; i++) {
       let filename = `${req.body.name.replaceAll(" ", "_")}_${Date.now()}`;
       imageFiles.push({
@@ -170,19 +177,10 @@ const updateProductByIdController = asyncHandler(async (req, res) => {
       await uploadFileToS3(reqFiles[i], filename);
     }
   }
-
-  // update product
-  const product = await Product.findByIdAndUpdate(req.query.id, {
-    updated_by: req.user._id.toString(),
-    images: imageFiles,
-    ...req.body,
-  });
-
-  // Check for product exists
-  if (!product) {
-    return res.status(400).json({ message: NO_PRODUCT_FOUND_ID });
-  }
-  res.status(200).json({ message: UPDATED_PRODUCT_DETAILS });
+  const updatedProduct = await product.save();
+  res
+    .status(200)
+    .json({ message: `${updatedProduct.name} ${UPDATED_PRODUCT_DETAILS}` });
 });
 
 // @desc    delete product
@@ -201,13 +199,14 @@ const deleteProductByIdController = asyncHandler(async (req, res) => {
   }
 
   // delete product
-  const product = await Product.findByIdAndDelete(req.query.id);
+  const product = await Product.findById(req.query.id);
 
   // Check for product exists
   if (!product) {
     return res.status(400).json({ message: NO_PRODUCT_FOUND_ID });
   }
-  res.status(200).json({ message: REMOVED_PRODUCT });
+  const result = await product.deleteOne();
+  res.status(200).json({ message: `${result.name} ${REMOVED_PRODUCT}` });
 });
 
 module.exports = {

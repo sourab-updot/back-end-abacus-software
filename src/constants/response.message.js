@@ -35,8 +35,8 @@ exports.PRODUCT_CAT_REQUIRED = "Product category is required";
 exports.NO_PRODUCTS_FOUND = "Inventory is empty.";
 exports.NO_PRODUCT_FOUND_ID = "Cannot find any product with this id.";
 exports.NO_PRODUCTS_FOUND_CAT = "Cannot find any product under this category.";
-exports.UPDATED_PRODUCT_DETAILS = "Product updated successfully";
-exports.REMOVED_PRODUCT = "Product removed from inventory successfully";
+exports.UPDATED_PRODUCT_DETAILS = "updated successfully";
+exports.REMOVED_PRODUCT = "removed from inventory successfully";
 
 // Category
 exports.CATEGORY_CREATED = "Category created successfully.";
