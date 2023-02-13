@@ -117,9 +117,15 @@ exports.updateClientController = asyncHandler(async (req, res) => {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
 
-  // checking for params id
+  // checking for params id and if it exists
   if (!req.query.id) {
     return res.status(400).json({ message: "Client ID is required" });
+  }
+
+  const client = await ClientModel.findById(req.query.id).exec();
+
+  if (!client) {
+    return res.status(400).json({ message: "Client does not exists" });
   }
 
   // Check for unique bank account number
@@ -148,19 +154,16 @@ exports.updateClientController = asyncHandler(async (req, res) => {
   if (imageFile) {
     imageFileName = randomBytesGenerator(16);
   }
-  // e780e28c9aa96ab1706b1b123a7dcd61;
-  // update
-  await ClientModel.findByIdAndUpdate(req.query.id, {
-    company_logo: imageFile && imageFileName,
-    ...req.body,
-  }).catch((err) => {
-    return res.status(400).json({ message: "Client does not exists" });
-  });
+
   if (imageFile) {
+    client.company_logo = imageFileName;
     await uploadFileToS3(imageFile, imageFileName);
   }
+
+  const updatedClient = await client.save();
+
   res.status(200).json({
-    message: "Client details updated successfully",
+    message: `${updatedClient.company_name}'s details updated successfully`,
   });
 });
 
@@ -184,7 +187,7 @@ exports.removeClientByIdController = asyncHandler(async (req, res) => {
   const client = await ClientModel.findById(req.query.id).exec();
 
   if (!client) {
-    return res.status(400).json({ message: "Client not found" });
+    return res.status(400).json({ message: "Client does not exists" });
   }
 
   const result = await client.deleteOne();
