@@ -78,12 +78,10 @@ const getAllProductsController = asyncHandler(async (req, res) => {
   }
 
   // Get products
-  const products = await Product.find();
-
-  // Check for empty inventory
-  if (!products) {
+  const products = await Product.find().catch((e) => {
     return res.status(400).json({ message: NO_PRODUCTS_FOUND });
-  }
+  });
+
   res.status(200).json(products);
 });
 
