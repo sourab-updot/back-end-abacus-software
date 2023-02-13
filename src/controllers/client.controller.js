@@ -5,6 +5,16 @@ const { _validateUser } = require("../middlewares/_validate.middleware");
 const { clientValidation } = require("../validations/client.validations");
 const { uploadFileToS3 } = require("../configs/aws.s3");
 const { randomBytesGenerator } = require("../utility/randomCryptoGenerator");
+const {
+  CLIENT_EMAIL_EXISTS,
+  CLIENT_ACC_NUM_EXISTS,
+  CLIENT_CREATED,
+  CLIENT_ID_REQ,
+  CLIENT_NOT_FOUND,
+  CLIENTS_NOT_FOUND,
+  CLIENT_UPDATED,
+  CLIENT_DELETED,
+} = require("../constants/response.message");
 
 // @desc    add new client controller
 // @route   /api/clients/addClient
@@ -26,9 +36,7 @@ exports.addClientController = asyncHandler(async (req, res) => {
     email: req.body.email,
   });
   if (foundEmail) {
-    return res
-      .status(400)
-      .json({ message: "A client already exists with this email address." });
+    return res.status(400).json({ message: CLIENT_EMAIL_EXISTS });
   }
 
   // Check for unique bank account number
@@ -36,9 +44,7 @@ exports.addClientController = asyncHandler(async (req, res) => {
     bank_account_number: req.body.bank_account_number,
   });
   if (foundAccountNum) {
-    return res
-      .status(400)
-      .json({ message: "A client already exists with this bank details" });
+    return res.status(400).json({ message: CLIENT_ACC_NUM_EXISTS });
   }
 
   //Process image
@@ -61,7 +67,7 @@ exports.addClientController = asyncHandler(async (req, res) => {
     await uploadFileToS3(imageFile, imageFileName);
   }
   res.status(200).json({
-    message: "Client added successfully",
+    message: CLIENT_CREATED,
   });
 });
 
@@ -78,12 +84,12 @@ exports.getClientByIdController = asyncHandler(async (req, res) => {
 
   // checking for params id
   if (!req.query.id) {
-    return res.status(400).json({ message: "Client ID is required" });
+    return res.status(400).json({ message: CLIENT_ID_REQ });
   }
 
   // Get client
   const client = await ClientModel.findById(req.query.id).catch((err) => {
-    return res.status(400).json({ message: "Client does not exists" });
+    return res.status(400).json({ message: CLIENT_NOT_FOUND });
   });
   res.status(200).json(client);
 });
@@ -101,7 +107,7 @@ exports.getAllClientsByIdController = asyncHandler(async (req, res) => {
 
   // Get clients
   const clients = await ClientModel.find().catch((err) => {
-    return res.status(400).json({ message: "Clients does not exists" });
+    return res.status(400).json({ message: CLIENTS_NOT_FOUND });
   });
   res.status(200).json(clients);
 });
@@ -119,13 +125,13 @@ exports.updateClientController = asyncHandler(async (req, res) => {
 
   // checking for params id and if it exists
   if (!req.query.id) {
-    return res.status(400).json({ message: "Client ID is required" });
+    return res.status(400).json({ message: CLIENT_ID_REQ });
   }
 
   const client = await ClientModel.findById(req.query.id).exec();
 
   if (!client) {
-    return res.status(400).json({ message: "Client does not exists" });
+    return res.status(400).json({ message: CLIENT_NOT_FOUND });
   }
 
   // Check for unique bank account number
@@ -133,9 +139,7 @@ exports.updateClientController = asyncHandler(async (req, res) => {
     email: req.body.email,
   });
   if (foundEmail && foundEmail._id.toString() !== req.query.id) {
-    return res
-      .status(400)
-      .json({ message: "A client already exists with this email address." });
+    return res.status(400).json({ message: CLIENT_EMAIL_EXISTS });
   }
 
   // Check for unique bank account number
@@ -143,9 +147,7 @@ exports.updateClientController = asyncHandler(async (req, res) => {
     bank_account_number: req.body.bank_account_number,
   });
   if (foundAccountNum && foundAccountNum._id.toString() !== req.query.id) {
-    return res
-      .status(400)
-      .json({ message: "A client already exists with this bank details" });
+    return res.status(400).json({ message: CLIENT_ACC_NUM_EXISTS });
   }
 
   //Process image
@@ -163,7 +165,7 @@ exports.updateClientController = asyncHandler(async (req, res) => {
   const updatedClient = await client.save();
 
   res.status(200).json({
-    message: `${updatedClient.company_name}'s details updated successfully`,
+    message: `${updatedClient.company_name}'s ${CLIENT_UPDATED}`,
   });
 });
 
@@ -180,19 +182,17 @@ exports.removeClientByIdController = asyncHandler(async (req, res) => {
 
   // checking for params id
   if (!req.query.id) {
-    return res.status(400).json({ message: "Client ID is required" });
+    return res.status(400).json({ message: CLIENT_ID_REQ });
   }
 
   // Get client by id and delete
   const client = await ClientModel.findById(req.query.id).exec();
 
   if (!client) {
-    return res.status(400).json({ message: "Client does not exists" });
+    return res.status(400).json({ message: CLIENT_NOT_FOUND });
   }
 
   const result = await client.deleteOne();
 
-  res
-    .status(200)
-    .json({ message: `${result.company_name} has been removed successfully` });
+  res.status(200).json({ message: `${result.company_name} ${CLIENT_DELETED}` });
 });

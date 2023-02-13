@@ -52,3 +52,15 @@ exports.PAYMENT_UPDATED = "Payment record updated successfully";
 exports.PAYMENT_DELETED = "Payment record deleted successfully.";
 exports.PAYMENT_NOT_FOUND = "No payment record found.";
 exports.PAYMENT_ID_NOT_FOUND = "Payment Id is required.";
+
+// Client
+exports.CLIENT_NOT_FOUND = "Client does not exists";
+exports.CLIENTS_NOT_FOUND = "Clients does not exists";
+exports.CLIENT_UPDATED = "details updated successfully";
+exports.CLIENT_CREATED = "Client added successfully";
+exports.CLIENT_DELETED = "has been removed successfully";
+exports.CLIENT_EMAIL_EXISTS =
+  "A client already exists with this email address.";
+exports.CLIENT_ACC_NUM_EXISTS =
+  "A client already exists with this bank details";
+exports.CLIENT_ID_REQ = "Client ID is required";
