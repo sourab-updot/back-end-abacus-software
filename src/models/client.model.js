@@ -29,7 +29,7 @@ const ClientSchema = new Schema({
     type: String,
     required: [true, "email required"],
   },
-  mobile: {
+  mobile_number: {
     type: String,
   },
   address: {
