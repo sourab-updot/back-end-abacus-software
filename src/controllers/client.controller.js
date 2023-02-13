@@ -150,7 +150,21 @@ exports.updateClientController = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: CLIENT_ACC_NUM_EXISTS });
   }
 
-  //Process image
+  //Processing request body
+  const {
+    company_name,
+    representative_name,
+    role,
+    email,
+    mobile_number,
+    address_line,
+    state,
+    country,
+    bank_name,
+    bank_account_number,
+    bank_ifsc_code,
+  } = req.body;
+
   const imageFile = req.file;
   let imageFileName = "";
   if (imageFile) {
@@ -161,6 +175,20 @@ exports.updateClientController = asyncHandler(async (req, res) => {
     client.company_logo = imageFileName;
     await uploadFileToS3(imageFile, imageFileName);
   }
+
+  // Updating
+  client.updated_by = req.user._id.toString();
+  client.company_name = company_name;
+  client.representative_name = representative_name;
+  client.role = role;
+  client.email = email;
+  client.mobile_number = mobile_number;
+  client.address_line = address_line;
+  client.state = state;
+  client.country = country;
+  client.bank_name = bank_name;
+  client.bank_account_number = bank_account_number;
+  client.bank_ifsc_code = bank_ifsc_code;
 
   const updatedClient = await client.save();
 
