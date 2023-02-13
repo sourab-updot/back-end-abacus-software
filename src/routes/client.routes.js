@@ -3,6 +3,7 @@ const {
   getClientByIdController,
   getAllClientsByIdController,
   updateClientController,
+  removeClientByIdController,
 } = require("../controllers/client.controller");
 const { uploadCompanyImage } = require("../middlewares/fileUpload.middleware");
 const authHandler = require("../middlewares/token.middleware");
@@ -29,5 +30,8 @@ router.patch(
   authHandler,
   updateClientController
 );
+
+//  remove client
+router.delete("/removeClient", authHandler, removeClientByIdController);
 
 module.exports = router;

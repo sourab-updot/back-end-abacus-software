@@ -81,7 +81,7 @@ exports.getClientByIdController = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Client ID is required" });
   }
 
-  // Get products
+  // Get client
   const client = await ClientModel.findById(req.query.id).catch((err) => {
     return res.status(400).json({ message: "Client does not exists" });
   });
@@ -162,4 +162,34 @@ exports.updateClientController = asyncHandler(async (req, res) => {
   res.status(200).json({
     message: "Client details updated successfully",
   });
+});
+
+// @desc    remove client by id controller
+// @route   /api/clients/removeClient
+// @access  Protected
+
+exports.removeClientByIdController = asyncHandler(async (req, res) => {
+  // Validate user
+  const validUser = _validateUser(req, UserModel);
+  if (!validUser) {
+    return res.status(401).json({ message: UNAUTHORIZED_ERR });
+  }
+
+  // checking for params id
+  if (!req.query.id) {
+    return res.status(400).json({ message: "Client ID is required" });
+  }
+
+  // Get client by id and delete
+  const client = await ClientModel.findById(req.query.id).exec();
+
+  if (!client) {
+    return res.status(400).json({ message: "Client not found" });
+  }
+
+  const result = await client.deleteOne();
+
+  res
+    .status(200)
+    .json({ message: `${result.company_name} has been removed successfully` });
 });
