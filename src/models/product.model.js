@@ -5,12 +5,12 @@ const ProductSchema = new Schema(
   {
     created_by: {
       type: Schema.Types.ObjectId,
-      required: [true, "creator of product is required"],
+      required: [true, "created by is required"],
       ref: "user",
     },
     updated_by: {
       type: Schema.Types.ObjectId,
-      required: [true, "updator of product is required"],
+      required: [true, "updated by is required"],
       ref: "user",
     },
     name: {
