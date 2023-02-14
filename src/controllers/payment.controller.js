@@ -28,8 +28,8 @@ exports.addPaymentController = asyncHandler(async (req, res) => {
   }
 
   const newPayment = await new PaymentModel({
-    created_by: req.user._id,
-    updated_by: req.user._id,
+    created_by: req.user._id.toString(),
+    updated_by: req.user._id.toString(),
     ...req.body,
   });
 
