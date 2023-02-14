@@ -8,6 +8,9 @@ const uploadProductImage = multer({ storage: storage });
 
 const uploadCompanyImage = multer({ storage: storage });
 
+const uploadAttachments = multer({ storage: storage });
+
 exports.uploadUserImage = uploadUserImage;
 exports.uploadProductImage = uploadProductImage;
 exports.uploadCompanyImage = uploadCompanyImage;
+exports.uploadAttachments = uploadAttachments;
