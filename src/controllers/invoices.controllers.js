@@ -59,6 +59,7 @@ exports.addInvoicesController = asyncHandler(async (req, res) => {
     bank_ifsc_code,
     terms,
     payment_terms,
+    section_wise,
   } = req.body;
 
   //Process image
@@ -122,6 +123,7 @@ exports.addInvoicesController = asyncHandler(async (req, res) => {
     terms,
     payment_terms,
     attachments,
+    section_wise,
   });
 
   newInvoice.save();
@@ -297,6 +299,7 @@ exports.updateInvoiceByIdController = asyncHandler(async (req, res) => {
     bank_ifsc_code,
     terms,
     payment_terms,
+    section_wise,
   } = req.body;
 
   //Get the invoice
@@ -363,6 +366,7 @@ exports.updateInvoiceByIdController = asyncHandler(async (req, res) => {
   invoiceData.bank_ifsc_code = bank_ifsc_code;
   invoiceData.terms = terms;
   invoiceData.payment_terms = payment_terms;
+  invoiceData.section_wise = section_wise;
 
   const updatedInvoice = await invoiceData.save();
 

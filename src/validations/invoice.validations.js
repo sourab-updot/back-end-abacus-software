@@ -37,6 +37,7 @@ const invoiceValidation = Joi.object({
   payable: Joi.string(),
   terms: Joi.string(),
   payment_terms: Joi.string(),
+  section_wise: Joi.array(),
 });
 
 module.exports = { invoiceValidation };

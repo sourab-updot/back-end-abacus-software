@@ -105,6 +105,8 @@ const InvoiceSchema = new Schema(
     ],
     terms: String,
     payment_terms: String,
+    // Section wise
+    section_wise: Array,
   },
   {
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },
