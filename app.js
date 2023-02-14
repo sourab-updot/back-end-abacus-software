@@ -18,6 +18,7 @@ const productRoutes = require("./src/routes/product.routes");
 const categoryRoutes = require("./src/routes/category.routes");
 const paymentRoutes = require("./src/routes/payment.routes");
 const clientRoutes = require("./src/routes/client.routes");
+const invoiceRoutes = require("./src/routes/invoices.routes");
 
 // Configs
 const app = express();
@@ -44,7 +45,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/clients", clientRoutes);
-
+app.use("/api/invoices", invoiceRoutes);
 // 404 route
 app.use("*", (req, res, next) => {
   return res.status(404).json({
