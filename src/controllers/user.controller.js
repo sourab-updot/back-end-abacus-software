@@ -3,6 +3,7 @@ const {
   registerValidation,
   signinValidation,
   verificationValidation,
+  updateValidation,
 } = require("../validations/user.validations");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
@@ -24,6 +25,7 @@ const {
   UNAUTHORIZED_ERR,
   USER_UPDATED,
   USERS_NOT_FOUND,
+  USERNAME_PASSWORD_REQ,
 } = require("../constants/response.message");
 const { mailTransporter } = require("../configs/mail.transporter");
 const { signToken } = require("../configs/jwt.config");
@@ -143,7 +145,7 @@ const verifyUserController = asyncHandler(async (req, res) => {
 });
 
 // @desc get user
-// @route /api/user/verify
+// @route /api/user/getUser
 // @access protected
 const getUserController = asyncHandler(async (req, res) => {
   // Validate user
@@ -180,40 +182,81 @@ const getAllUsersController = asyncHandler(async (req, res) => {
 // @route /api/user/update
 // @access protected
 const updateUserController = asyncHandler(async (req, res) => {
+  // Validate
+  const { error } = updateValidation.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
   // Check for authorized user
   if (!req.user) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
 
+  const user = await User.findById(req.user._id).exec();
+  if (!user) {
+    return res(400).json({ message: USER_NOT_FOUND_ERR });
+  }
+
+  // Destructuring req data
+  const { first_name, last_name, avatar, email } = req.body;
+
   // Process image
   let imageFileName = "";
   const imageFile = req.file;
 
-  // if a new upload
-  if (imageFile && req.user.avatar !== imageFile.filename) {
+  // if a new image upload
+  if (imageFile) {
     imageFileName = randomBytesGenerator(16);
-    await uploadFileToS3(imageFile, imageFileName);
-  }
-  // If not a new upload
-  else if (imageFile && req.user.avatar === imageFile.filename) {
-    imageFileName = req.user.avatar;
-  }
-  // If user removes the picture then remove from S3
-  else {
-    console.log("image removed");
+    user.avatar = imageFileName;
+  } else if (!imageFile && avatar === "null") {
+    user.avatar = "";
+    //TODO remove from cdn also
   }
 
-  //  Check if user exists in db and update
+  user.first_name = first_name;
+  user.last_name = last_name;
+  user.email = email;
 
-  const updatedUser = await User.findByIdAndUpdate(req.user._id, {
-    avatar: imageFileName,
-    ...req.body,
-  });
-  if (!updatedUser) {
-    return res.status(400).json({ message: USERNAME_NOT_FOUND_ERR });
+  const updatedUser = await user.save();
+
+  res
+    .status(200)
+    .json({ message: `${updatedUser.username}'s ${USER_UPDATED}` });
+});
+
+// Only exposed for super admins
+const userPasswordChangeController = asyncHandler(async (req, res) => {
+  // Check for authorized user
+  if (!req.user || req.user.role !== "super admin") {
+    return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
 
-  res.status(200).json({ message: USER_UPDATED });
+  if (!req.body.employee_id || !req.body.password) {
+    return res.status(400).json({ message: USERNAME_PASSWORD_REQ });
+  }
+  const user = await User.findOne({ emp_id: req.body.employee_id }).exec();
+  if (!user) {
+    return res(400).json({ message: USER_NOT_FOUND_ERR });
+  }
+
+  user.password = req.body.password;
+  const updatedUser = await user.save();
+
+  // Send password to employee via email
+  const mailOptions = {
+    from: "sourab@updot.in",
+    to: user.email,
+    subject: "Password change request approved.",
+    text: `Greetings from Abacus. Here is your new password: ${req.body.password}`,
+  };
+
+  const mailErr = mailTransporter(mailOptions);
+  if (mailErr) {
+    return res.status(400).json({ message: MAIL_FAILED_ERR });
+  }
+  res
+    .status(200)
+    .json({ message: `${updatedUser.username}'s ${USER_UPDATED}` });
 });
 module.exports = {
   registerUserController,
@@ -222,4 +265,5 @@ module.exports = {
   getUserController,
   getAllUsersController,
   updateUserController,
+  userPasswordChangeController,
 };

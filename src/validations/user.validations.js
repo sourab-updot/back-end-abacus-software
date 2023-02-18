@@ -28,9 +28,18 @@ const verificationValidation = Joi.object({
 const tokenValidation = Joi.object({
   token: Joi.string().required(),
 });
+
+// For user update
+const updateValidation = Joi.object({
+  first_name: Joi.string().min(2).required(),
+  last_name: Joi.string().min(2).required(),
+  avatar: Joi.string().min(2),
+  email: Joi.string().min(6).required().email(),
+});
 module.exports = {
   registerValidation,
   signinValidation,
   verificationValidation,
   tokenValidation,
+  updateValidation,
 };
