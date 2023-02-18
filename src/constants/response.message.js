@@ -5,6 +5,7 @@ exports.API_ENDPOINT_NOT_FOUND_ERR = "API ENDPOINT NOT FOUND";
 exports.USERNAME_NOT_FOUND_ERR = "No user found with this username. Try again.";
 exports.USER_NOT_FOUND_ERR = "No user found with this employee Id. Try again.";
 exports.PASSWORD_NOT_VALID_ERR = "Password is invalid. Try again.";
+exports.PASSWORD_NOT_MATCH_ERR = "Current password is not matching. Try again.";
 exports.USER_ACCESS_GRANTED = "Access Granted.";
 exports.USER_REGISTERED = "User created successfully.";
 exports.USER_UPDATED = "details updated successfully.";
@@ -16,6 +17,7 @@ exports.TOKEN_VERIFY_SUCCESS = "Token verified successfully";
 exports.UNAUTHORIZED_ERR = "You are not authorized.";
 exports.USERS_NOT_FOUND = "Users not found";
 exports.USERNAME_PASSWORD_REQ = "Username and password are required";
+exports.PASSWORD_UPDATED = "Passwrod updated successfully";
 // Business routes responses
 exports.BUSINESS_DETAILS_ADDED = "Successfully added business details.";
 exports.BUSINESS_DETAILS_USER_NOT_FOUND =

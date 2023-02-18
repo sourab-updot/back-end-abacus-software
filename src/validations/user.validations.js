@@ -36,10 +36,18 @@ const updateValidation = Joi.object({
   avatar: Joi.string().min(2),
   email: Joi.string().min(6).required().email(),
 });
+
+// For user password reset
+const passwordResetValidation = Joi.object({
+  old_password: Joi.string().min(2).required(),
+  new_password: Joi.string().min(2).required(),
+  confirm_password: Joi.string().min(2).required(),
+});
 module.exports = {
   registerValidation,
   signinValidation,
   verificationValidation,
   tokenValidation,
   updateValidation,
+  passwordResetValidation,
 };

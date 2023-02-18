@@ -4,6 +4,7 @@ const {
   signinValidation,
   verificationValidation,
   updateValidation,
+  passwordResetValidation,
 } = require("../validations/user.validations");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
@@ -26,6 +27,8 @@ const {
   USER_UPDATED,
   USERS_NOT_FOUND,
   USERNAME_PASSWORD_REQ,
+  PASSWORD_NOT_MATCH_ERR,
+  PASSWORD_UPDATED,
 } = require("../constants/response.message");
 const { mailTransporter } = require("../configs/mail.transporter");
 const { signToken } = require("../configs/jwt.config");
@@ -224,39 +227,52 @@ const updateUserController = asyncHandler(async (req, res) => {
     .json({ message: `${updatedUser.username}'s ${USER_UPDATED}` });
 });
 
-// Only exposed for super admins
-const userPasswordChangeController = asyncHandler(async (req, res) => {
+// @desc update user password
+// @route /api/user/passwordReset
+// @access protected
+const userPasswordResetController = asyncHandler(async (req, res) => {
+  // Validate req body
+  const { error } = passwordResetValidation.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
   // Check for authorized user
-  if (!req.user || req.user.role !== "super admin") {
+  if (!req.user) {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
 
-  if (!req.body.employee_id || !req.body.password) {
-    return res.status(400).json({ message: USERNAME_PASSWORD_REQ });
-  }
-  const user = await User.findOne({ emp_id: req.body.employee_id }).exec();
+  // Get user
+  const user = await User.findOne({ _id: req.user._id });
+
   if (!user) {
-    return res(400).json({ message: USER_NOT_FOUND_ERR });
+    return res.status(400).json({ message: USER_NOT_FOUND_ERR });
+  }
+  // Check for current password
+  const validPassword = await bcrypt.compareSync(
+    req.body.old_password,
+    user.password
+  );
+  if (!validPassword) {
+    return res.status(400).json({ message: PASSWORD_NOT_MATCH_ERR });
   }
 
-  user.password = req.body.password;
-  const updatedUser = await user.save();
+  user.password = req.body.new_password;
+  await user.save();
 
   // Send password to employee via email
   const mailOptions = {
     from: "sourab@updot.in",
     to: user.email,
-    subject: "Password change request approved.",
-    text: `Greetings from Abacus. Here is your new password: ${req.body.password}`,
+    subject: "Password reset complete.",
+    text: `Greetings from Abacus. Your password has been updated successfully.`,
   };
 
   const mailErr = mailTransporter(mailOptions);
   if (mailErr) {
     return res.status(400).json({ message: MAIL_FAILED_ERR });
   }
-  res
-    .status(200)
-    .json({ message: `${updatedUser.username}'s ${USER_UPDATED}` });
+  res.status(200).json({ message: PASSWORD_UPDATED });
 });
 module.exports = {
   registerUserController,
@@ -265,5 +281,5 @@ module.exports = {
   getUserController,
   getAllUsersController,
   updateUserController,
-  userPasswordChangeController,
+  userPasswordResetController,
 };

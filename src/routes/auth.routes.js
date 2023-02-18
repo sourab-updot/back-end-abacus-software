@@ -6,7 +6,7 @@ const {
   getUserController,
   updateUserController,
   getAllUsersController,
-  userPasswordChangeController,
+  userPasswordResetController,
 } = require("../controllers/user.controller");
 const authHandler = require("../middlewares/token.middleware");
 const { uploadUserImage } = require("../middlewares/fileUpload.middleware");
@@ -39,10 +39,6 @@ router.patch(
 );
 
 // Updated password only for super admin and not to be used in client side, either used postman or make curl requests
-router.patch(
-  "/changePasswordBySuper",
-  authHandler,
-  userPasswordChangeController
-);
+router.patch("/passwordReset", authHandler, userPasswordResetController);
 
 module.exports = router;
