@@ -143,7 +143,18 @@ exports.getAllInvoiceController = asyncHandler(async (req, res) => {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
 
-  const invoice = await InvoiceModel.find().exec();
+  const invoice = await InvoiceModel.find()
+    .populate({
+      path: "created_by",
+      select: [
+        "-password",
+        "-verification_code",
+        "-created_at",
+        "-updated_at",
+        "-__v",
+      ],
+    })
+    .exec();
   if (!invoice) {
     return res.status(400).json({ message: "Invoice not found" });
   }

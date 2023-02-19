@@ -20,9 +20,12 @@ const BusinessSchema = new Schema(
       type: String,
       required: [true, "mobile number is required"],
     },
-    address: {
+    address_line1: {
       type: String,
       require: [true, "address, is required"],
+    },
+    address_line2: {
+      type: String,
     },
     city: {
       type: String,

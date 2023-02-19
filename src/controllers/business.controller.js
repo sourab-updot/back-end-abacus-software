@@ -67,7 +67,7 @@ const getDetailsByUserController = asyncHandler(async (req, res) => {
       message: BUSINESS_DETAILS_USER_NOT_FOUND,
     });
   }
-  res.status(200).json({ business });
+  res.status(200).json({ ...business._doc });
 });
 
 // @desc    update details by userId
