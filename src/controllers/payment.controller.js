@@ -49,14 +49,37 @@ exports.getAllPaymentsController = asyncHandler(async (req, res) => {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
 
-  const allPayments = await PaymentModel.find()
+  // Destructuring request query
+  const { page = 0, pageSize = 20, sort = null, search = "" } = req.query;
+
+  const generateSort = () => {
+    const parsedSort = JSON.parse(sort);
+    const sortFormatted = {
+      [parsedSort.field]: (parsedSort.sort = "asc" ? 1 : -1),
+    };
+    return sortFormatted;
+  };
+
+  const sortFormatted = Boolean(sort) ? generateSort() : {};
+
+  const allPayments = await PaymentModel.find({
+    $or: [
+      { date: { $regex: new RegExp(search, "i") } },
+      { payment_type: { $regex: new RegExp(search, "i") } },
+      { amount: { $regex: new RegExp(search, "i") } },
+    ],
+  })
+    .sort(sortFormatted)
+    .skip(page * pageSize)
+    .limit(pageSize)
     .populate({
       path: "client",
       select: ["-created_at", "-updated_at", "-__v"],
     })
-    .catch(() => {
-      res.status(400).json({ message: PAYMENT_NOT_FOUND });
-    });
+    .exec();
+  if (!allPayments) {
+    return res.status(400).json({ message: PAYMENT_NOT_FOUND });
+  }
 
   res.status(200).json(allPayments);
 });

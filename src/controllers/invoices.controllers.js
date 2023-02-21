@@ -143,20 +143,35 @@ exports.getAllInvoiceController = asyncHandler(async (req, res) => {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
 
-  const invoice = await InvoiceModel.find()
-    .populate({
-      path: "created_by",
-      select: [
-        "-password",
-        "-verification_code",
-        "-created_at",
-        "-updated_at",
-        "-__v",
-      ],
-    })
+  // Destructuring request query
+  const { page = 0, pageSize = 20, sort = null, search = "" } = req.query;
+
+  const generateSort = () => {
+    const parsedSort = JSON.parse(sort);
+    const sortFormatted = {
+      [parsedSort.field]: (parsedSort.sort = "asc" ? 1 : -1),
+    };
+    return sortFormatted;
+  };
+
+  const sortFormatted = Boolean(sort) ? generateSort() : {};
+
+  const invoice = await InvoiceModel.find({
+    $or: [
+      { billed_to_company_name: { $regex: new RegExp(search, "i") } },
+      { invoice_number: { $regex: new RegExp(search, "i") } },
+      { status: { $regex: new RegExp(search, "i") } },
+      { issue_date: { $regex: new RegExp(search, "i") } },
+      { payable: { $regex: new RegExp(search, "i") } },
+    ],
+  })
+    .sort(sortFormatted)
+    .skip(page * pageSize)
+    .limit(pageSize)
     .exec();
+
   if (!invoice) {
-    return res.status(400).json({ message: "Invoice not found" });
+    return res.status(400).json({ message: "Invoices not found" });
   }
 
   res.status(200).json(invoice);

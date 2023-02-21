@@ -19,7 +19,7 @@ const PaymentSchema = new Schema(
       ref: "client",
     },
     date: {
-      type: Date,
+      type: String,
       required: [true, "date is required"],
     },
     payment_type: {
