@@ -1,0 +1,7 @@
+FROM node:18.14.0
+ENV NODE_ENV=develpement
+WORKDIR /server
+COPY ["package.json", "package-lock.json*", "./"]
+RUN npm install
+COPY . .
+CMD [ "nodemon", "app.js" ]

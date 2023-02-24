@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+ dev:
+  build:
+   context: .
+   dockerfile: Dockerfile.dev
+  ports:
+   - 8000:8000
+   - 9229:9229
+  environment:
+   - NODE_ENV=development
+   - SERVER_PORT=8000
+   - CONNECTIONSTRING=mongodb+srv://sourab:sourab@abacuscluster.ifclia0.mongodb.net/?retryWrites=true
+  volumes:
+   - .:/server
+   - /server/node_modules
+  command: npm run debug
+
+ mongo:
+  image: mongo:6.0
+  ports:
+   - 27017:27017
+  volumes:
+   - mongodb:/data/db
+   - mongodb_config:/data/configdb
+volumes:
+ mongodb:
+ mongodb_config:
