@@ -149,7 +149,7 @@ exports.updatePaymentController = asyncHandler(async (req, res) => {
 
   await payment.save();
 
-  res.status(200).json(PAYMENT_UPDATED);
+  res.status(200).json({ message: PAYMENT_UPDATED });
 });
 
 // @desc    delete payment by id
