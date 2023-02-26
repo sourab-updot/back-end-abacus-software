@@ -107,10 +107,35 @@ exports.getAllClientsByIdController = asyncHandler(async (req, res) => {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
 
+  // Destructuring request query
+  const { page = 0, pageSize = 20, sort = null, search = "" } = req.query;
+
+  const generateSort = () => {
+    const parsedSort = JSON.parse(sort);
+    const sortFormatted = {
+      [parsedSort.field]: (parsedSort.sort = "asc" ? 1 : -1),
+    };
+    return sortFormatted;
+  };
+
+  const sortFormatted = Boolean(sort) ? generateSort() : {};
+
   // Get clients
-  const clients = await ClientModel.find().catch((err) => {
-    return res.status(400).json({ message: CLIENTS_NOT_FOUND });
-  });
+  const clients = await ClientModel.find({
+    $or: [
+      { company_name: { $regex: new RegExp(search, "i") } },
+      { representative_name: { $regex: new RegExp(search, "i") } },
+      { role: { $regex: new RegExp(search, "i") } },
+      { email: { $regex: new RegExp(search, "i") } },
+    ],
+  })
+    .sort(sortFormatted)
+    .skip(page * pageSize)
+    .limit(pageSize)
+    .exec()
+    .catch((err) => {
+      return res.status(400).json({ message: CLIENTS_NOT_FOUND });
+    });
   res.status(200).json(clients);
 });
 
