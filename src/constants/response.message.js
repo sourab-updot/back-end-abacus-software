@@ -61,8 +61,10 @@ exports.CLIENTS_NOT_FOUND = "Clients does not exists";
 exports.CLIENT_UPDATED = "details updated successfully";
 exports.CLIENT_CREATED = "Client added successfully";
 exports.CLIENT_DELETED = "has been removed successfully";
+exports.CLIENTS_DELETED = "All Clients have been removed successfully";
 exports.CLIENT_EMAIL_EXISTS =
   "A client already exists with this email address.";
 exports.CLIENT_ACC_NUM_EXISTS =
   "A client already exists with this bank details";
 exports.CLIENT_ID_REQ = "Client ID is required";
+exports.CLIENTS_ID_REQ = "Clients ID is required";

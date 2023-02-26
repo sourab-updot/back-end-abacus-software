@@ -14,6 +14,8 @@ const {
   CLIENTS_NOT_FOUND,
   CLIENT_UPDATED,
   CLIENT_DELETED,
+  CLIENTS_ID_REQ,
+  CLIENTS_DELETED,
 } = require("../constants/response.message");
 
 // @desc    add new client controller
@@ -229,3 +231,35 @@ exports.removeClientByIdController = asyncHandler(async (req, res) => {
 
   res.status(200).json({ message: `${result.company_name} ${CLIENT_DELETED}` });
 });
+
+// @desc    remove multiple clients by id controller
+// @route   /api/clients/removeMultipleClients
+// @access  Protected
+
+exports.removeMultipleClientsByIdsController = asyncHandler(
+  async (req, res) => {
+    // Validate user
+    const validUser = _validateUser(req, UserModel);
+    if (!validUser) {
+      return res.status(401).json({ message: UNAUTHORIZED_ERR });
+    }
+
+    // checking for req body
+    if (!req.body.ids || req.body.ids.length === 0) {
+      return res.status(400).json({ message: CLIENTS_ID_REQ });
+    }
+
+    // Get client by id and delete
+    await ClientModel.deleteMany({
+      _id: {
+        $in: [...req.body.ids],
+      },
+    })
+      .exec()
+      .catch((err) => {
+        return res.status(400).json({ message: CLIENT_NOT_FOUND });
+      });
+
+    res.status(200).json({ message: CLIENTS_DELETED });
+  }
+);
