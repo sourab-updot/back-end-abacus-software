@@ -5,6 +5,7 @@ const {
   verificationValidation,
   updateValidation,
   passwordResetValidation,
+  updateBySuperadminValidation,
 } = require("../validations/user.validations");
 const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
@@ -29,6 +30,8 @@ const {
   USERNAME_PASSWORD_REQ,
   PASSWORD_NOT_MATCH_ERR,
   PASSWORD_UPDATED,
+  USER_ID_REQ,
+  NOT_UNIQUE_USERNAME_ERR,
 } = require("../constants/response.message");
 const { mailTransporter } = require("../configs/mail.transporter");
 const { signToken } = require("../configs/jwt.config");
@@ -44,10 +47,21 @@ const registerUserController = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: error.details[0].message });
   }
 
+  // Check for authorized user
+  if (!req.user) {
+    return res.status(401).json({ message: UNAUTHORIZED_ERR });
+  }
+
   // To check unique emails
   const emailExist = await User.findOne({ email: req.body.email });
   if (emailExist) {
     return res.status(400).json({ message: NOT_UNIQUE_EMAIL_ERR });
+  }
+
+  // To check unique username
+  const usernameExist = await User.findOne({ email: req.body.username });
+  if (usernameExist) {
+    return res.status(400).json({ message: NOT_UNIQUE_USERNAME_ERR });
   }
 
   const imageFileName = randomBytesGenerator(16);
@@ -56,9 +70,22 @@ const registerUserController = asyncHandler(async (req, res) => {
   const newUser = new User({
     ...req.body,
     avatar: imageFileName,
+    created_by: req.user._id.toString(),
+    updated_by: req.user._id.toString(),
   });
   await uploadFileToS3(imageFile, imageFileName);
   await newUser.save();
+  // Send code via email
+  const mailOptions = {
+    from: "sourab@updot.in",
+    to: newUser.email,
+    subject: "Onboarding confirmation.",
+    text: `Greetings from Abacus. Congratulations you have been onboarded as ${newUser.role}. Here's your credentials username ${newUser.username} and password ${req.body.password}.`,
+  };
+  const mailErr = mailTransporter(mailOptions);
+  if (mailErr) {
+    return res.status(400).json({ message: MAIL_FAILED_ERR });
+  }
   res.status(200).json({ message: USER_REGISTERED });
 });
 
@@ -215,10 +242,72 @@ const updateUserController = asyncHandler(async (req, res) => {
     user.avatar = "";
     //TODO remove from cdn also
   }
-
+  user.updated_by = req.user._id.toString();
   user.first_name = first_name;
   user.last_name = last_name;
   user.email = email;
+
+  const updatedUser = await user.save();
+
+  res
+    .status(200)
+    .json({ message: `${updatedUser.username}'s ${USER_UPDATED}` });
+});
+
+// @desc update user by super admin
+// @route /api/user/updateBySuperadmin
+// @access protected
+const updateUserBySuperadminController = asyncHandler(async (req, res) => {
+  // Validate
+  const { error } = updateBySuperadminValidation.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+  // Check for authorized user
+  if (!req.user || req.user.role !== "Super Admin") {
+    return res.status(401).json({ message: UNAUTHORIZED_ERR });
+  }
+
+  if (!req.query.id) {
+    return res.status(400).json({ message: USER_ID_REQ });
+  }
+  const user = await User.findById(req.query.id).exec();
+  if (!user) {
+    return res(400).json({ message: USER_NOT_FOUND_ERR });
+  }
+
+  // Destructuring req data
+  const {
+    first_name,
+    last_name,
+    avatar,
+    email,
+    role,
+    designation,
+    mobile_number,
+    username,
+  } = req.body;
+
+  // Process image
+  let imageFileName = "";
+  const imageFile = req.file;
+
+  // if a new image upload
+  if (imageFile) {
+    imageFileName = randomBytesGenerator(16);
+    user.avatar = imageFileName;
+  } else if (!imageFile && avatar === "null") {
+    user.avatar = "";
+    //TODO remove from cdn also
+  }
+  user.updated_by = req.user._id.toString();
+  user.first_name = first_name;
+  user.last_name = last_name;
+  user.email = email;
+  user.mobile_number = mobile_number;
+  user.role = role;
+  user.designation = designation;
+  user.username = username;
 
   const updatedUser = await user.save();
 
@@ -274,6 +363,7 @@ const userPasswordResetController = asyncHandler(async (req, res) => {
   }
   res.status(200).json({ message: PASSWORD_UPDATED });
 });
+
 module.exports = {
   registerUserController,
   signinUserController,
@@ -281,5 +371,6 @@ module.exports = {
   getUserController,
   getAllUsersController,
   updateUserController,
+  updateUserBySuperadminController,
   userPasswordResetController,
 };

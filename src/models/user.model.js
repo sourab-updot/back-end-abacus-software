@@ -53,14 +53,20 @@ const UserSchema = new Schema(
       type: String,
       default: "admin",
     },
-    businessId: {
-      type: Number,
-      default: 0,
-    },
     verification_code: {
       type: String,
     },
     lastVisited: { type: Date, default: new Date() },
+    created_by: {
+      type: Schema.Types.ObjectId,
+      required: [true, "created by is required"],
+      ref: "user",
+    },
+    updated_by: {
+      type: Schema.Types.ObjectId,
+      required: [true, "updated by is required"],
+      ref: "user",
+    },
   },
   {
     timestamps: { createdAt: "created_at", updatedAt: "updated_at" },

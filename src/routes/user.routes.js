@@ -7,6 +7,7 @@ const {
   updateUserController,
   getAllUsersController,
   userPasswordResetController,
+  updateUserBySuperadminController,
 } = require("../controllers/user.controller");
 const authHandler = require("../middlewares/token.middleware");
 const { uploadUserImage } = require("../middlewares/fileUpload.middleware");
@@ -14,6 +15,7 @@ const { uploadUserImage } = require("../middlewares/fileUpload.middleware");
 //User Register Endpoint
 router.post(
   "/register",
+  authHandler,
   uploadUserImage.single("avatar"),
   registerUserController
 );
@@ -38,6 +40,13 @@ router.patch(
   updateUserController
 );
 
+// Update user by superadmin
+router.patch(
+  "/updateBySuperadmin",
+  authHandler,
+  uploadUserImage.single("avatar"),
+  updateUserBySuperadminController
+);
 // Updated password only for super admin and not to be used in client side, either used postman or make curl requests
 router.patch("/passwordReset", authHandler, userPasswordResetController);
 

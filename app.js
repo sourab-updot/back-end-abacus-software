@@ -12,7 +12,7 @@ const {
 } = require("./src/constants/response.message");
 
 // Routes
-const authRoutes = require("./src/routes/auth.routes");
+const authRoutes = require("./src/routes/user.routes");
 const businessRoutes = require("./src/routes/business.routes");
 const productRoutes = require("./src/routes/product.routes");
 const categoryRoutes = require("./src/routes/category.routes");

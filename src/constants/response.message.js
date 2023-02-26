@@ -10,6 +10,7 @@ exports.USER_ACCESS_GRANTED = "Access Granted.";
 exports.USER_REGISTERED = "User created successfully.";
 exports.USER_UPDATED = "details updated successfully.";
 exports.NOT_UNIQUE_EMAIL_ERR = "Email already exists.";
+exports.NOT_UNIQUE_USERNAME_ERR = "Username already taken.";
 exports.MAIL_FAILED_ERR = "Something went wrong in sending verficatiom mail.";
 exports.MAIL_SENT_SUCCESS = "Verification mail sent to registerd email.";
 exports.VERIFICATION_FAILED_ERR = "Verification code is invalid.";
@@ -18,6 +19,7 @@ exports.UNAUTHORIZED_ERR = "You are not authorized.";
 exports.USERS_NOT_FOUND = "Users not found";
 exports.USERNAME_PASSWORD_REQ = "Username and password are required";
 exports.PASSWORD_UPDATED = "Passwrod updated successfully";
+exports.USER_ID_REQ = "User Id is missing.";
 // Business routes responses
 exports.BUSINESS_DETAILS_ADDED = "Successfully added business details.";
 exports.BUSINESS_DETAILS_USER_NOT_FOUND =
