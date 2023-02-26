@@ -4,6 +4,7 @@ const {
   getAllClientsByIdController,
   updateClientController,
   removeClientByIdController,
+  removeMultipleClientsByIdsController,
 } = require("../controllers/client.controller");
 const { uploadCompanyImage } = require("../middlewares/fileUpload.middleware");
 const authHandler = require("../middlewares/token.middleware");
@@ -31,7 +32,14 @@ router.patch(
   updateClientController
 );
 
-//  remove client
+//  remove a singel client
 router.delete("/removeClient", authHandler, removeClientByIdController);
+
+// remove multiple clients
+router.delete(
+  "/removeMultipleClients",
+  authHandler,
+  removeMultipleClientsByIdsController
+);
 
 module.exports = router;
