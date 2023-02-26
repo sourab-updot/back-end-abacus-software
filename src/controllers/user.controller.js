@@ -364,6 +364,64 @@ const userPasswordResetController = asyncHandler(async (req, res) => {
   res.status(200).json({ message: PASSWORD_UPDATED });
 });
 
+// @desc    remove user by id controller
+// @route   /api/users/removeUser
+// @access  Protected
+const removeUserByIdController = asyncHandler(async (req, res) => {
+  // Validate user
+  const validUser = _validateUser(req, User);
+  if (!validUser || req.user.role !== "Super Admin") {
+    return res.status(401).json({ message: UNAUTHORIZED_ERR });
+  }
+
+  // checking for params id
+  if (!req.query.id) {
+    return res.status(400).json({ message: USER_ID_REQ });
+  }
+
+  // Get user by id and delete
+  const user = await User.findById(req.query.id).exec();
+
+  if (!user) {
+    return res.status(400).json({ message: USER_NOT_FOUND_ERR });
+  }
+
+  const result = await user.deleteOne();
+
+  res.status(200).json({
+    message: `${result.username} "has been removed successfully";`,
+  });
+});
+
+// @desc    remove users controller
+// @route   /api/users/removeUser
+// @access  Protected
+const removeUsersController = asyncHandler(async (req, res) => {
+  // Validate user
+  const validUser = _validateUser(req, User);
+  if (!validUser || req.user.role !== "Super Admin") {
+    return res.status(401).json({ message: UNAUTHORIZED_ERR });
+  }
+
+  // checking for req body
+  if (!req.body.ids || req.body.ids.length === 0) {
+    return res.status(400).json({ message: USER_ID_REQ });
+  }
+
+  // Get users by id and delete
+  await User.deleteMany({
+    _id: {
+      $in: [...req.body.ids],
+    },
+  })
+    .exec()
+    .catch((err) => {
+      return res.status(400).json({ message: USERS_NOT_FOUND });
+    });
+
+  res.status(200).json({ message: USERS_REMOVED });
+});
+
 module.exports = {
   registerUserController,
   signinUserController,
@@ -373,4 +431,6 @@ module.exports = {
   updateUserController,
   updateUserBySuperadminController,
   userPasswordResetController,
+  removeUserByIdController,
+  removeUsersController,
 };

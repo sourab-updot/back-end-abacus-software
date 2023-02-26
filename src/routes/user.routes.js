@@ -8,6 +8,8 @@ const {
   getAllUsersController,
   userPasswordResetController,
   updateUserBySuperadminController,
+  removeUserByIdController,
+  removeUsersController,
 } = require("../controllers/user.controller");
 const authHandler = require("../middlewares/token.middleware");
 const { uploadUserImage } = require("../middlewares/fileUpload.middleware");
@@ -49,5 +51,11 @@ router.patch(
 );
 // Updated password only for super admin and not to be used in client side, either used postman or make curl requests
 router.patch("/passwordReset", authHandler, userPasswordResetController);
+
+// Remove a single user
+router.delete("/removeUser", authHandler, removeUserByIdController);
+
+// Remove a mutliple users
+router.delete("/removeUsers", authHandler, removeUsersController);
 
 module.exports = router;
