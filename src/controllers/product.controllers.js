@@ -59,8 +59,7 @@ const addProductController = asyncHandler(async (req, res) => {
     created_by: req.user._id.toString(),
     updated_by: req.user._id.toString(),
     images: imageFiles,
-    // This is temprorary category
-    category: "63e4b611e8c84af2bb8ae0ba",
+    category: req.body.category.toString(),
     ...req.body,
   });
   await newProduct.save();
@@ -77,10 +76,40 @@ const getAllProductsController = asyncHandler(async (req, res) => {
     return res.status(401).json({ message: UNAUTHORIZED_ERR });
   }
 
+  // Destructuring request query
+  const { page = 0, pageSize = 20, sort = null, search = "" } = req.query;
+
+  const generateSort = () => {
+    const parsedSort = JSON.parse(sort);
+    const sortFormatted = {
+      [parsedSort.field]: (parsedSort.sort = "asc" ? 1 : -1),
+    };
+    return sortFormatted;
+  };
+
+  const sortFormatted = Boolean(sort) ? generateSort() : {};
+
   // Get products
-  const products = await Product.find().catch((e) => {
-    return res.status(400).json({ message: NO_PRODUCTS_FOUND });
-  });
+  const products = await Product.find({
+    $or: [
+      { name: { $regex: new RegExp(search, "i") } },
+      // { amount: { $regex: new RegExp(search, "i") } },
+      // { quantity: { $regex: new RegExp(search, "i") } },
+      // { totalQty: { $regex: new RegExp(search, "i") } },
+      { stock_status: { $regex: new RegExp(search, "i") } },
+    ],
+  })
+    .sort(sortFormatted)
+    .skip(page * pageSize)
+    .limit(pageSize)
+    .populate({
+      path: "category",
+      select: ["-created_at", "-updated_at"],
+    })
+    .exec()
+    .catch((e) => {
+      return res.status(400).json({ message: NO_PRODUCTS_FOUND });
+    });
 
   res.status(200).json(products);
 });

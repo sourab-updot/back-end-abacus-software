@@ -27,8 +27,9 @@ const ProductSchema = new Schema(
       ref: "category",
     },
     price: {
-      type: String,
+      type: Number,
       required: [true, "price is required"],
+      default: 0.0,
     },
     images: [
       {
@@ -37,6 +38,10 @@ const ProductSchema = new Schema(
       },
     ],
     quantity: {
+      type: Number,
+      default: 0,
+    },
+    totalQty: {
       type: Number,
       default: 0,
     },
