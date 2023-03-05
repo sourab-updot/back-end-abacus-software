@@ -13,7 +13,7 @@ const ClientSchema = new Schema(
       required: [true, "updated by required"],
       ref: "user",
     },
-    company_logo: String,
+    company_logo: Buffer,
     company_name: {
       type: String,
       required: [true, "company name is required"],
