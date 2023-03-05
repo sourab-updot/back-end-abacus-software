@@ -5,11 +5,7 @@ const registerValidation = Joi.object({
   first_name: Joi.string().min(2).required(),
   last_name: Joi.string().min(2).required(),
   username: Joi.string().min(2).required(),
-  avatar: Joi.object().keys({
-    file: Joi.string().required(),
-    buffer: Joi.object().required(),
-    mimeType: Joi.string().required(),
-  }),
+  avatar: Joi.string().min(0),
   mobile_number: Joi.string().min(4).required(),
   email: Joi.string().min(6).required().email(),
   password: Joi.string().min(4).required(),
@@ -36,7 +32,7 @@ const tokenValidation = Joi.object({
 const updateValidation = Joi.object({
   first_name: Joi.string().min(2).required(),
   last_name: Joi.string().min(2).required(),
-  avatar: Joi.string().min(2),
+  avatar: Joi.string().min(0),
   email: Joi.string().min(6).required().email(),
 });
 
@@ -50,6 +46,7 @@ const updateBySuperadminValidation = Joi.object({
   mobile_number: Joi.string().min(2).required(),
   designation: Joi.string().min(2).required(),
   role: Joi.string().min(2).required(),
+  avatar: Joi.string().min(0),
 });
 // For user password reset
 const passwordResetValidation = Joi.object({

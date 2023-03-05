@@ -26,7 +26,7 @@ const UserSchema = new Schema(
       required: [true, "mobile number required"],
       min: 4,
     },
-    avatar: String,
+    avatar: Buffer,
     username: {
       type: String,
       required: [true, "username required"],

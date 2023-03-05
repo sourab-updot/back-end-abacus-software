@@ -3,8 +3,7 @@ const UserModel = require("../models/user.model");
 const asyncHandler = require("express-async-handler");
 const { _validateUser } = require("../middlewares/_validate.middleware");
 const { clientValidation } = require("../validations/client.validations");
-const { uploadFileToS3 } = require("../configs/aws.s3");
-const { randomBytesGenerator } = require("../utility/randomCryptoGenerator");
+
 const {
   CLIENT_EMAIL_EXISTS,
   CLIENT_ACC_NUM_EXISTS,
@@ -180,7 +179,6 @@ exports.updateClientController = asyncHandler(async (req, res) => {
   //Processing request body
 
   let buffer = Buffer.from(req.body.company_logo, "base64");
-
   // Updating
 
   await ClientModel.findByIdAndUpdate(req.query.id, {

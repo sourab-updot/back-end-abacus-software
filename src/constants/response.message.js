@@ -1,5 +1,6 @@
 // Generic responses
 exports.API_ENDPOINT_NOT_FOUND_ERR = "API ENDPOINT NOT FOUND";
+exports.FILE_SIZE_EXCEEDED = "File size is more than 50MB. Cannot be uploaded.";
 
 // User route responses
 exports.USERNAME_NOT_FOUND_ERR = "No user found with this username. Try again.";
@@ -8,7 +9,7 @@ exports.PASSWORD_NOT_VALID_ERR = "Password is invalid. Try again.";
 exports.PASSWORD_NOT_MATCH_ERR = "Current password is not matching. Try again.";
 exports.USER_ACCESS_GRANTED = "Access Granted.";
 exports.USER_REGISTERED = "User created successfully.";
-exports.USER_UPDATED = "details updated successfully.";
+exports.USER_UPDATED = "Details updated successfully.";
 exports.NOT_UNIQUE_EMAIL_ERR = "Email already exists.";
 exports.NOT_UNIQUE_USERNAME_ERR = "Username already taken.";
 exports.MAIL_FAILED_ERR = "Something went wrong in sending verficatiom mail.";
@@ -61,7 +62,7 @@ exports.PAYMENT_ID_NOT_FOUND = "Payment Id is required.";
 // Client
 exports.CLIENT_NOT_FOUND = "Client does not exists";
 exports.CLIENTS_NOT_FOUND = "Clients does not exists";
-exports.CLIENT_UPDATED = "details updated successfully";
+exports.CLIENT_UPDATED = "Details updated successfully";
 exports.CLIENT_CREATED = "Client added successfully";
 exports.CLIENT_DELETED = "has been removed successfully";
 exports.CLIENTS_DELETED = "All Clients have been removed successfully";

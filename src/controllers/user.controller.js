@@ -32,6 +32,7 @@ const {
   PASSWORD_UPDATED,
   USER_ID_REQ,
   NOT_UNIQUE_USERNAME_ERR,
+  USERS_REMOVED,
 } = require("../constants/response.message");
 const { mailTransporter } = require("../configs/mail.transporter");
 const { signToken } = require("../configs/jwt.config");
@@ -58,24 +59,17 @@ const registerUserController = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: NOT_UNIQUE_EMAIL_ERR });
   }
 
-  // To check unique username
-  const usernameExist = await User.findOne({ email: req.body.username });
-  if (usernameExist) {
-    return res.status(400).json({ message: NOT_UNIQUE_USERNAME_ERR });
-  }
-
-  const imageFileName = randomBytesGenerator(16);
-  const imageFile = req.file;
-
-  const newUser = new User({
-    ...req.body,
-    avatar: imageFileName,
+  let buffer = Buffer.from(req.body.avatar, "base64");
+  const newUser = await new User({
+    avatar: buffer,
     created_by: req.user._id.toString(),
     updated_by: req.user._id.toString(),
+    ...req.body,
   });
-  await uploadFileToS3(imageFile, imageFileName);
+
   await newUser.save();
-  // Send code via email
+
+  // Send welcome mail
   const mailOptions = {
     from: "sourab@updot.in",
     to: newUser.email,
@@ -228,30 +222,18 @@ const updateUserController = asyncHandler(async (req, res) => {
   }
 
   // Destructuring req data
-  const { first_name, last_name, avatar, email } = req.body;
+  const { avatar } = req.body;
 
   // Process image
-  let imageFileName = "";
-  const imageFile = req.file;
+  let buffer = Buffer.from(avatar, "base64");
 
-  // if a new image upload
-  if (imageFile) {
-    imageFileName = randomBytesGenerator(16);
-    user.avatar = imageFileName;
-  } else if (!imageFile && avatar === "null") {
-    user.avatar = "";
-    //TODO remove from cdn also
-  }
-  user.updated_by = req.user._id.toString();
-  user.first_name = first_name;
-  user.last_name = last_name;
-  user.email = email;
+  await User.findByIdAndUpdate(req.user._id, {
+    avatar: buffer,
+    updated_by: req.user._id.toString(),
+    ...req.body,
+  });
 
-  const updatedUser = await user.save();
-
-  res
-    .status(200)
-    .json({ message: `${updatedUser.username}'s ${USER_UPDATED}` });
+  res.status(200).json({ message: USER_UPDATED });
 });
 
 // @desc update user by super admin
@@ -277,43 +259,18 @@ const updateUserBySuperadminController = asyncHandler(async (req, res) => {
   }
 
   // Destructuring req data
-  const {
-    first_name,
-    last_name,
-    avatar,
-    email,
-    role,
-    designation,
-    mobile_number,
-    username,
-  } = req.body;
+  const { avatar } = req.body;
 
   // Process image
-  let imageFileName = "";
-  const imageFile = req.file;
+  let buffer = Buffer.from(avatar, "base64");
 
-  // if a new image upload
-  if (imageFile) {
-    imageFileName = randomBytesGenerator(16);
-    user.avatar = imageFileName;
-  } else if (!imageFile && avatar === "null") {
-    user.avatar = "";
-    //TODO remove from cdn also
-  }
-  user.updated_by = req.user._id.toString();
-  user.first_name = first_name;
-  user.last_name = last_name;
-  user.email = email;
-  user.mobile_number = mobile_number;
-  user.role = role;
-  user.designation = designation;
-  user.username = username;
+  await User.findByIdAndUpdate(req.query.id, {
+    avatar: buffer,
+    updated_by: req.user._id.toString(),
+    ...req.body,
+  });
 
-  const updatedUser = await user.save();
-
-  res
-    .status(200)
-    .json({ message: `${updatedUser.username}'s ${USER_UPDATED}` });
+  res.status(200).json({ message: USER_UPDATED });
 });
 
 // @desc update user password

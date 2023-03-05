@@ -15,12 +15,7 @@ const authHandler = require("../middlewares/token.middleware");
 const { uploadUserImage } = require("../middlewares/fileUpload.middleware");
 
 //User Register Endpoint
-router.post(
-  "/register",
-  authHandler,
-  uploadUserImage.single("avatar"),
-  registerUserController
-);
+router.post("/register", authHandler, registerUserController);
 
 // User signin endpoint
 router.post("/signin", signinUserController);
@@ -35,18 +30,12 @@ router.get("/getuser", authHandler, getUserController);
 router.get("/getAllUsers", authHandler, getAllUsersController);
 
 // Update user
-router.patch(
-  "/update",
-  authHandler,
-  uploadUserImage.single("avatar"),
-  updateUserController
-);
+router.patch("/update", authHandler, updateUserController);
 
 // Update user by superadmin
 router.patch(
   "/updateBySuperadmin",
   authHandler,
-  uploadUserImage.single("avatar"),
   updateUserBySuperadminController
 );
 // Updated password only for super admin and not to be used in client side, either used postman or make curl requests
